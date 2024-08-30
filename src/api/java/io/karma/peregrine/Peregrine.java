@@ -17,13 +17,15 @@
 package io.karma.peregrine;
 
 import io.karma.peregrine.buffer.UniformBuffer;
-import io.karma.peregrine.buffer.UniformBufferBuilder;
 import io.karma.peregrine.buffer.UniformBufferFactory;
 import io.karma.peregrine.buffer.UniformBufferProvider;
 import io.karma.peregrine.dispose.DispositionHandler;
 import io.karma.peregrine.font.FontFamily;
+import io.karma.peregrine.font.FontFamilyFactory;
 import io.karma.peregrine.reload.ReloadHandler;
-import io.karma.peregrine.shader.*;
+import io.karma.peregrine.shader.ShaderLoader;
+import io.karma.peregrine.shader.ShaderLoaderProvider;
+import io.karma.peregrine.shader.ShaderProgramFactory;
 import io.karma.peregrine.texture.TextureFactories;
 import io.karma.peregrine.uniform.UniformTypeFactories;
 import io.karma.peregrine.util.DI;
@@ -44,8 +46,6 @@ import org.lwjgl.opengl.GLCapabilities;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -95,11 +95,13 @@ public final class Peregrine {
     private static int shaderBinaryFormat;
 
     private static IForgeRegistry<FontFamily> fontFamilyRegistry;
+    private static FontFamilyFactory fontFamilyFactory;
 
     // @formatter:off
     private Peregrine() {}
     // @formatter:on
 
+    // ========= Loader specific functionality =========
     public static boolean isLoaded() {
         return FMLLoader.getLoadingModList().getModFileById(MODID) != null;
     }
@@ -116,6 +118,7 @@ public final class Peregrine {
         }
         return RegistryManager.FROZEN.getRegistry(name);
     }
+    // ================================================
 
     private static void ensureInitialized() {
         if (!isInitialized.get()) {
@@ -185,6 +188,7 @@ public final class Peregrine {
         });
 
         queryRegistries();
+        fontFamilyFactory = di.get(FontFamilyFactory.class);
     }
 
     public static ExecutorService getExecutorService() {
@@ -202,6 +206,11 @@ public final class Peregrine {
         return dispositionHandler;
     }
 
+    public static FontFamilyFactory getFontFamilyFactory() {
+        ensureInitialized();
+        return fontFamilyFactory;
+    }
+
     @OnlyIn(Dist.CLIENT)
     public static TextureFactories getTextureFactories() {
         ensureInitialized();
@@ -215,13 +224,13 @@ public final class Peregrine {
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static Function<Consumer<UniformBufferBuilder>, UniformBuffer> getUniformBufferFactory() {
+    public static UniformBufferFactory getUniformBufferFactory() {
         ensureInitialized();
         return uniformBufferFactory;
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static Function<Consumer<ShaderProgramBuilder>, ShaderProgram> getShaderProgramFactory() {
+    public static ShaderProgramFactory getShaderProgramFactory() {
         ensureInitialized();
         return shaderProgramFactory;
     }
