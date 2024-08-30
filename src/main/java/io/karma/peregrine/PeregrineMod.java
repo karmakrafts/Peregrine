@@ -37,6 +37,10 @@ import net.minecraftforge.event.GameShuttingDownEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.ApiStatus.Internal;
+import org.lwjgl.opengl.ARBGetProgramBinary;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.system.MemoryStack;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -90,7 +94,8 @@ public final class PeregrineMod {
                     DefaultUniformBufferBuilder::build,
                     DefaultShaderProgramBuilder::build,
                     () -> SHADER_LOADER,
-                    GLOBAL_UNIFORMS);
+                    GLOBAL_UNIFORMS,
+                    detectShaderBinaryFormat());
             });
         });
     }
@@ -105,6 +110,24 @@ public final class PeregrineMod {
         }
         catch (Throwable error) {
             Peregrine.LOGGER.error("Could not shutdown executor service", error);
+        }
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    private static int detectShaderBinaryFormat() {
+        if (GL.getCapabilities().GL_ARB_get_program_binary) {
+            try (final var stack = MemoryStack.stackPush()) {
+                final var formatCount = GL11.glGetInteger(ARBGetProgramBinary.GL_NUM_PROGRAM_BINARY_FORMATS);
+                if (formatCount == 0) {
+                    return -1;
+                }
+                final var formats = stack.mallocInt(formatCount);
+                GL11.glGetIntegerv(ARBGetProgramBinary.GL_PROGRAM_BINARY_FORMATS, formats);
+                return formats.get(0);
+            }
+        }
+        else {
+            return -1;
         }
     }
 }

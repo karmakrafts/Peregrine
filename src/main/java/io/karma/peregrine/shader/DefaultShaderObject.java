@@ -66,16 +66,17 @@ public final class DefaultShaderObject extends Program implements ShaderObject {
                              final ResourceProvider resourceProvider) {
         final var loader = program.getLoader();
         detach(program);
-
-        if (!loader.load(directory, resourceProvider, program, this)) {
+        final var result = loader.load(directory, resourceProvider, program, this);
+        if (result.shouldCompile()) {
             GL20.glCompileShader(id);
             if (GL20.glGetShaderi(id, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
                 Peregrine.LOGGER.error("Could not recompile shader {}: {}", location, GL20.glGetShaderInfoLog(id));
                 return false; // Link is always cancelled in this case
             }
+        }
+        if (result.shouldSave()) {
             loader.save(directory, resourceProvider, program, this);
         }
-
         isCompiled = true;
         attach(program);
         return true; // Link may occur

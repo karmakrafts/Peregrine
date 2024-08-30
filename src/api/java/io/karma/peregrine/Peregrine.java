@@ -67,6 +67,8 @@ public final class Peregrine {
     private static boolean supportsDoubleShaderType;
     private static boolean supportsDirectStateAccess;
 
+    private static int shaderBinaryFormat;
+
     // @formatter:off
     private Peregrine() {}
     // @formatter:on
@@ -97,7 +99,7 @@ public final class Peregrine {
     private static void queryExtensions() {
         LOGGER.info("Querying OpenGL extensions");
         supportsBindlessTextures = queryExtension("GL_ARB_bindless_texture");
-        supportsBinaryShaderCaching = queryExtension("GL_ARB_get_program_binary");
+        supportsBinaryShaderCaching = queryExtension("GL_ARB_get_program_binary") && shaderBinaryFormat != -1;
         supportsStorageBuffers = queryExtension("GL_ARB_shader_storage_buffer_object");
         supportsTessellationShaders = queryExtension("GL_ARB_tessellation_shader");
         supportsComputeShaders = queryExtension("GL_ARB_compute_shader");
@@ -114,12 +116,18 @@ public final class Peregrine {
                      final Function<Consumer<UniformBufferBuilder>, UniformBuffer> uniformBufferFactory,
                      final Function<Consumer<ShaderProgramBuilder>, ShaderProgram> shaderProgramFactory,
                      final Supplier<ShaderLoader> defaultShaderLoader,
-                     final Supplier<UniformBuffer> globalUniforms) {
+                     final Supplier<UniformBuffer> globalUniforms,
+                     final int shaderBinaryFormat) {
         if (!isInitialized.compareAndSet(false, true)) {
             throw new IllegalStateException("Peregrine is already initialized");
         }
 
         LOGGER.info("Initializing Peregrine");
+
+        if (shaderBinaryFormat != -1) {
+            LOGGER.info("Using shader binary format 0x{}", Integer.toHexString(shaderBinaryFormat));
+        }
+
         Peregrine.executorService = executorService;
         Peregrine.reloadHandler = reloadHandler;
         Peregrine.dispositionHandler = dispositionHandler;
@@ -129,6 +137,7 @@ public final class Peregrine {
         Peregrine.shaderProgramFactory = shaderProgramFactory;
         Peregrine.defaultShaderLoader = defaultShaderLoader;
         Peregrine.globalUniforms = globalUniforms;
+        Peregrine.shaderBinaryFormat = shaderBinaryFormat;
 
         queryExtensions();
     }
@@ -216,5 +225,10 @@ public final class Peregrine {
     public static boolean supportsDirectStateAccess() {
         ensureInitialized();
         return supportsDirectStateAccess;
+    }
+
+    public static int getShaderBinaryFormat() {
+        ensureInitialized();
+        return shaderBinaryFormat;
     }
 }
