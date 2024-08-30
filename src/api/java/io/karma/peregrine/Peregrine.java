@@ -173,13 +173,13 @@ public final class Peregrine {
             Peregrine.executorService = executorService;
             Peregrine.reloadHandler = reloadHandler;
             Peregrine.dispositionHandler = dispositionHandler;
-            Peregrine.textureFactories = di.get(TextureFactories.class);
-            Peregrine.uniformTypeFactories = di.get(UniformTypeFactories.class);
-            Peregrine.uniformBufferFactory = di.get(UniformBufferFactory.class);
-            Peregrine.shaderProgramFactory = di.get(ShaderProgramFactory.class);
-            Peregrine.defaultShaderLoader = di.get(ShaderLoaderProvider.class);
-            Peregrine.globalUniforms = di.get(UniformBufferProvider.class);
-            Peregrine.shaderBinaryFormat = Objects.requireNonNull(di.get(ShaderBinaryFormat.class)).value();
+            textureFactories = di.get(TextureFactories.class);
+            uniformTypeFactories = di.get(UniformTypeFactories.class);
+            uniformBufferFactory = di.get(UniformBufferFactory.class);
+            shaderProgramFactory = di.get(ShaderProgramFactory.class);
+            defaultShaderLoader = di.get(ShaderLoaderProvider.class);
+            globalUniforms = di.get(UniformBufferProvider.class);
+            shaderBinaryFormat = Objects.requireNonNull(di.get(ShaderBinaryFormat.class)).value();
 
             queryExtensions();
         });
