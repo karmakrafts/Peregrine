@@ -49,9 +49,10 @@ public interface ShaderLoader {
     }
 
     LoadResult load(final Path directory,
-                 final ResourceProvider resourceProvider,
-                 final ShaderProgram program,
-                 final ShaderObject object);
+                    final ResourceProvider resourceProvider,
+                    final ShaderProgram program,
+                    final ShaderObject object);
 
-    record LoadResult(boolean shouldCompile, boolean shouldSave) {}
+    record LoadResult(boolean shouldCompile, boolean shouldSave) {
+    }
 }

@@ -18,8 +18,6 @@ package io.karma.peregrine.reload;
 
 import io.karma.peregrine.Dispatcher;
 import net.minecraft.server.packs.resources.ResourceProvider;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.Comparator;
 

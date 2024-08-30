@@ -23,9 +23,7 @@ import io.karma.peregrine.dispose.DispositionHandler;
 import io.karma.peregrine.font.FontFamily;
 import io.karma.peregrine.font.FontFamilyFactory;
 import io.karma.peregrine.reload.ReloadHandler;
-import io.karma.peregrine.shader.ShaderLoader;
-import io.karma.peregrine.shader.ShaderLoaderProvider;
-import io.karma.peregrine.shader.ShaderProgramFactory;
+import io.karma.peregrine.shader.*;
 import io.karma.peregrine.texture.TextureFactories;
 import io.karma.peregrine.uniform.UniformTypeFactories;
 import io.karma.peregrine.util.DI;
@@ -71,9 +69,11 @@ public final class Peregrine {
     @OnlyIn(Dist.CLIENT)
     private static ShaderProgramFactory shaderProgramFactory;
     @OnlyIn(Dist.CLIENT)
-    private static Supplier<ShaderLoader> defaultShaderLoader;
+    private static ShaderLoaderProvider defaultShaderLoader;
     @OnlyIn(Dist.CLIENT)
-    private static Supplier<UniformBuffer> globalUniforms;
+    private static UniformBufferProvider globalUniforms;
+    @OnlyIn(Dist.CLIENT)
+    private static ShaderPreProcessorProvider defaultShaderPreProcessor;
 
     @OnlyIn(Dist.CLIENT)
     private static boolean supportsBindlessTextures;
@@ -186,6 +186,7 @@ public final class Peregrine {
             shaderProgramFactory = di.get(ShaderProgramFactory.class);
             defaultShaderLoader = di.get(ShaderLoaderProvider.class);
             globalUniforms = di.get(UniformBufferProvider.class);
+            defaultShaderPreProcessor = di.get(ShaderPreProcessorProvider.class);
             shaderBinaryFormat = Objects.requireNonNull(di.get(ShaderBinaryFormat.class)).value();
 
             queryExtensions();

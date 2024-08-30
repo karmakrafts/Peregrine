@@ -17,8 +17,6 @@
 package io.karma.peregrine.dispose;
 
 import io.karma.peregrine.Dispatcher;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.Comparator;
 

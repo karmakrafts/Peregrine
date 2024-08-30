@@ -16,6 +16,7 @@
 
 package io.karma.peregrine;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import io.karma.peregrine.Peregrine.Environment;
 import io.karma.peregrine.buffer.DefaultUniformBufferBuilder;
 import io.karma.peregrine.buffer.UniformBuffer;
@@ -38,6 +39,9 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.event.GameShuttingDownEvent;
+import net.minecraftforge.event.TickEvent.ClientTickEvent;
+import net.minecraftforge.event.TickEvent.Phase;
+import net.minecraftforge.event.TickEvent.RenderTickEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -45,6 +49,7 @@ import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.registries.NewRegistryEvent;
 import net.minecraftforge.registries.RegistryBuilder;
 import org.jetbrains.annotations.ApiStatus.Internal;
+import org.joml.Vector4f;
 import org.lwjgl.opengl.ARBGetProgramBinary;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
@@ -61,6 +66,8 @@ import java.util.concurrent.TimeUnit;
  */
 @Mod(Peregrine.MODID)
 public final class PeregrineMod {
+    private static PeregrineMod instance;
+
     @Internal
     public static final DefaultReloadHandler RELOAD_HANDLER = new DefaultReloadHandler();
     @Internal
@@ -87,7 +94,15 @@ public final class PeregrineMod {
         .uniform("ProjMat", MatrixType.MAT4)
         .uniform("ModelViewMat", MatrixType.MAT4)
         .uniform("ColorModulator", VectorType.VEC4)
-        .uniform("Time", ScalarType.FLOAT)));
+        .uniform("Time", ScalarType.FLOAT)
+        .onBind((program, buffer) -> {
+            final var cache = buffer.getCache();
+            cache.getMat4("ProjMat").set(RenderSystem.getProjectionMatrix());
+            cache.getMat4("ModelViewMat").set(RenderSystem.getModelViewMatrix());
+            cache.getVec4("ColorModulator").set(new Vector4f(RenderSystem.getShaderColor()));
+            cache.getFloat("Time").set(instance.renderTicks + instance.partialTicks);
+        })
+    ));
     // @formatter:on
 
     private static boolean isDevEnvironment;
@@ -96,7 +111,14 @@ public final class PeregrineMod {
     @OnlyIn(Dist.CLIENT)
     private static boolean isIrisInstalled;
 
+    @OnlyIn(Dist.CLIENT)
+    private int renderTicks;
+    @OnlyIn(Dist.CLIENT)
+    private float partialTicks;
+
     public PeregrineMod() {
+        instance = this;
+
         try {
             Class.forName("net.minecraft.world.level.Level");
             isDevEnvironment = true;
@@ -105,7 +127,9 @@ public final class PeregrineMod {
         catch (Throwable error) { /* SWALLOW */ }
 
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onCreateRegistries);
-        MinecraftForge.EVENT_BUS.addListener(this::onGameShutdown);
+        final var forgeBus = MinecraftForge.EVENT_BUS;
+        forgeBus.addListener(this::onGameShutdown);
+
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             final var modList = FMLLoader.getLoadingModList();
             isSodiumInstalled = modList.getModFileById("sodium") != null;
@@ -116,9 +140,12 @@ public final class PeregrineMod {
             if (!isIrisInstalled) {
                 isIrisInstalled = modList.getModFileById("oculus") != null;
             }
+            forgeBus.addListener(this::onClientTick);
+            forgeBus.addListener(this::onRenderTick);
             ((ReloadableResourceManager) Minecraft.getInstance().getResourceManager()).registerReloadListener(
                 RELOAD_HANDLER);
         });
+
         Minecraft.getInstance().execute(() -> {
             final var di = new DI();
             final var environment = new HashMap<String, Object>();
@@ -132,6 +159,7 @@ public final class PeregrineMod {
                 di.put(ShaderProgramFactory.class, DefaultShaderProgramBuilder::build);
                 di.put(ShaderLoaderProvider.class, () -> SHADER_LOADER);
                 di.put(UniformBufferProvider.class, GLOBAL_UNIFORMS::get);
+                di.put(ShaderPreProcessorProvider.class, () -> SHADER_PRE_PROCESSOR);
                 di.put(ShaderBinaryFormat.class, new ShaderBinaryFormat(detectShaderBinaryFormat()));
             });
             di.put(FontFamilyFactory.class, DefaultFontFamily::new);
@@ -159,23 +187,6 @@ public final class PeregrineMod {
         return GLOBAL_UNIFORMS.get();
     }
 
-    private void onCreateRegistries(final NewRegistryEvent event) {
-        Peregrine.LOGGER.info("Creating registries");
-        event.create(RegistryBuilder.of(Peregrine.FONT_FAMILY_REGISTRY_NAME));
-    }
-
-    private void onGameShutdown(final GameShuttingDownEvent event) {
-        try {
-            EXECUTOR_SERVICE.shutdown();
-            if (EXECUTOR_SERVICE.awaitTermination(5, TimeUnit.SECONDS)) {
-                EXECUTOR_SERVICE.shutdownNow().forEach(Runnable::run);
-            }
-        }
-        catch (Throwable error) {
-            Peregrine.LOGGER.error("Could not shutdown executor service", error);
-        }
-    }
-
     @OnlyIn(Dist.CLIENT)
     private static int detectShaderBinaryFormat() {
         if (GL.getCapabilities().GL_ARB_get_program_binary) {
@@ -191,6 +202,37 @@ public final class PeregrineMod {
         }
         else {
             return -1;
+        }
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    private void onClientTick(final ClientTickEvent event) {
+        if (event.phase == Phase.END) {
+            renderTicks++;
+        }
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    private void onRenderTick(final RenderTickEvent event) {
+        if (event.phase == Phase.START) {
+            partialTicks = event.renderTickTime;
+        }
+    }
+
+    private void onCreateRegistries(final NewRegistryEvent event) {
+        Peregrine.LOGGER.info("Creating registries");
+        event.create(RegistryBuilder.of(Peregrine.FONT_FAMILY_REGISTRY_NAME));
+    }
+
+    private void onGameShutdown(final GameShuttingDownEvent event) {
+        try {
+            EXECUTOR_SERVICE.shutdown();
+            if (EXECUTOR_SERVICE.awaitTermination(5, TimeUnit.SECONDS)) {
+                EXECUTOR_SERVICE.shutdownNow().forEach(Runnable::run);
+            }
+        }
+        catch (Throwable error) {
+            Peregrine.LOGGER.error("Could not shutdown executor service", error);
         }
     }
 }

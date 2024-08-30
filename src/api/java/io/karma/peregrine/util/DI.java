@@ -26,7 +26,8 @@ import java.util.HashMap;
 public final class DI {
     private final HashMap<Class<?>, Object> instances = new HashMap<>();
 
-    public DI() {}
+    public DI() {
+    }
 
     public <T, U extends T> void put(final Class<T> type, final U instance) {
         instances.put(type, instance);
