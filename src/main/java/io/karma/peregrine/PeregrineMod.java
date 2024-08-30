@@ -16,6 +16,7 @@
 
 package io.karma.peregrine;
 
+import io.karma.peregrine.Peregrine.Environment;
 import io.karma.peregrine.buffer.DefaultUniformBufferBuilder;
 import io.karma.peregrine.buffer.UniformBuffer;
 import io.karma.peregrine.buffer.UniformBufferFactory;
@@ -24,10 +25,7 @@ import io.karma.peregrine.dispose.DefaultDispositionHandler;
 import io.karma.peregrine.font.DefaultFontFamily;
 import io.karma.peregrine.font.FontFamilyFactory;
 import io.karma.peregrine.reload.DefaultReloadHandler;
-import io.karma.peregrine.shader.DefaultShaderLoader;
-import io.karma.peregrine.shader.DefaultShaderProgramBuilder;
-import io.karma.peregrine.shader.ShaderLoaderProvider;
-import io.karma.peregrine.shader.ShaderProgramFactory;
+import io.karma.peregrine.shader.*;
 import io.karma.peregrine.texture.DefaultTextureFactories;
 import io.karma.peregrine.texture.TextureFactories;
 import io.karma.peregrine.uniform.*;
@@ -43,6 +41,7 @@ import net.minecraftforge.event.GameShuttingDownEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.registries.NewRegistryEvent;
 import net.minecraftforge.registries.RegistryBuilder;
 import org.jetbrains.annotations.ApiStatus.Internal;
@@ -51,6 +50,7 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.MemoryStack;
 
+import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -77,6 +77,9 @@ public final class PeregrineMod {
     @OnlyIn(Dist.CLIENT)
     @Internal
     public static final DefaultShaderLoader SHADER_LOADER = new DefaultShaderLoader();
+    @OnlyIn(Dist.CLIENT)
+    @Internal
+    public static final DefaultShaderPreProcessor SHADER_PRE_PROCESSOR = new DefaultShaderPreProcessor();
 
     // @formatter:off
     @OnlyIn(Dist.CLIENT)
@@ -87,16 +90,42 @@ public final class PeregrineMod {
         .uniform("Time", ScalarType.FLOAT)));
     // @formatter:on
 
+    private static boolean isDevEnvironment;
+    @OnlyIn(Dist.CLIENT)
+    private static boolean isSodiumInstalled;
+    @OnlyIn(Dist.CLIENT)
+    private static boolean isIrisInstalled;
+
     public PeregrineMod() {
+        try {
+            Class.forName("net.minecraft.world.level.Level");
+            isDevEnvironment = true;
+            Peregrine.LOGGER.info("Detected development environment");
+        }
+        catch (Throwable error) { /* SWALLOW */ }
+
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onCreateRegistries);
         MinecraftForge.EVENT_BUS.addListener(this::onGameShutdown);
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+            final var modList = FMLLoader.getLoadingModList();
+            isSodiumInstalled = modList.getModFileById("sodium") != null;
+            if (!isSodiumInstalled) {
+                isSodiumInstalled = modList.getModFileById("embeddium") != null;
+            }
+            isIrisInstalled = modList.getModFileById("iris") != null;
+            if (!isIrisInstalled) {
+                isIrisInstalled = modList.getModFileById("oculus") != null;
+            }
             ((ReloadableResourceManager) Minecraft.getInstance().getResourceManager()).registerReloadListener(
                 RELOAD_HANDLER);
         });
         Minecraft.getInstance().execute(() -> {
             final var di = new DI();
+            final var environment = new HashMap<String, Object>();
+            environment.put("is_dev_environment", isDevEnvironment);
             DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+                environment.put("is_sodium_installed", isSodiumInstalled);
+                environment.put("is_iris_installed", isIrisInstalled);
                 di.put(TextureFactories.class, TEXTURE_FACTORIES);
                 di.put(UniformTypeFactories.class, UNIFORM_TYPE_FACTORIES);
                 di.put(UniformBufferFactory.class, DefaultUniformBufferBuilder::build);
@@ -106,8 +135,28 @@ public final class PeregrineMod {
                 di.put(ShaderBinaryFormat.class, new ShaderBinaryFormat(detectShaderBinaryFormat()));
             });
             di.put(FontFamilyFactory.class, DefaultFontFamily::new);
+            di.put(Environment.class, new Environment(environment));
             Peregrine.init(EXECUTOR_SERVICE, RELOAD_HANDLER, DISPOSE_HANDLER, di);
         });
+    }
+
+    public static boolean isDevelopmentEnvironment() {
+        return isDevEnvironment;
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public static boolean isSodiumInstalled() {
+        return isSodiumInstalled;
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public static boolean isIrisInstalled() {
+        return isIrisInstalled;
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public static UniformBuffer getGlobalUniforms() {
+        return GLOBAL_UNIFORMS.get();
     }
 
     private void onCreateRegistries(final NewRegistryEvent event) {

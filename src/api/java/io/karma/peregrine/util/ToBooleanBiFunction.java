@@ -14,25 +14,13 @@
  *  limitations under the License.
  */
 
-package io.karma.peregrine.shader;
-
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-
-import java.util.function.Function;
+package io.karma.peregrine.util;
 
 /**
  * @author Alexander Hinze
- * @since 29/08/2024
+ * @since 30/08/2024
  */
 @FunctionalInterface
-@OnlyIn(Dist.CLIENT)
-public interface ShaderPreProcessor {
-    ShaderPreProcessor PIPE = (source, prog, obj, loader) -> source;
-
-    String process(final String source,
-                   final ShaderProgram program,
-                   final ShaderObject object,
-                   final Function<ResourceLocation, String> loader);
+public interface ToBooleanBiFunction<T, U> {
+    boolean apply(final T t, final U u);
 }

@@ -34,7 +34,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryManager;
@@ -43,6 +42,7 @@ import org.apache.logging.log4j.Logger;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLCapabilities;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -94,6 +94,12 @@ public final class Peregrine {
     @OnlyIn(Dist.CLIENT)
     private static int shaderBinaryFormat;
 
+    @OnlyIn(Dist.CLIENT)
+    private static boolean isSodiumInstalled;
+    @OnlyIn(Dist.CLIENT)
+    private static boolean isIrisInstalled;
+
+    private static boolean isDevelopmentEnvironment;
     private static IForgeRegistry<FontFamily> fontFamilyRegistry;
     private static FontFamilyFactory fontFamilyFactory;
 
@@ -102,10 +108,6 @@ public final class Peregrine {
     // @formatter:on
 
     // ========= Loader specific functionality =========
-    public static boolean isLoaded() {
-        return FMLLoader.getLoadingModList().getModFileById(MODID) != null;
-    }
-
     public static DeferredRegister<FontFamily> createFontFamilyRegister(final String modId) {
         return DeferredRegister.create(fontFamilyRegistry, modId);
     }
@@ -167,6 +169,8 @@ public final class Peregrine {
         }
 
         LOGGER.info("Initializing Peregrine");
+        final var environment = Objects.requireNonNull(di.get(Environment.class)).props;
+        isDevelopmentEnvironment = (Boolean) environment.get("is_dev_environment");
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             if (shaderBinaryFormat != -1) {
@@ -185,6 +189,9 @@ public final class Peregrine {
             shaderBinaryFormat = Objects.requireNonNull(di.get(ShaderBinaryFormat.class)).value();
 
             queryExtensions();
+
+            isSodiumInstalled = (Boolean) environment.get("is_sodium_installed");
+            isIrisInstalled = (Boolean) environment.get("is_iris_installed");
         });
 
         queryRegistries();
@@ -209,6 +216,11 @@ public final class Peregrine {
     public static FontFamilyFactory getFontFamilyFactory() {
         ensureInitialized();
         return fontFamilyFactory;
+    }
+
+    public static boolean isDevelopmentEnvironment() {
+        ensureInitialized();
+        return isDevelopmentEnvironment;
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -299,5 +311,20 @@ public final class Peregrine {
     public static int getShaderBinaryFormat() {
         ensureInitialized();
         return shaderBinaryFormat;
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public static boolean isSodiumInstalled() {
+        ensureInitialized();
+        return isSodiumInstalled;
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public static boolean isIrisInstalled() {
+        ensureInitialized();
+        return isIrisInstalled;
+    }
+
+    public record Environment(Map<String, Object> props) {
     }
 }

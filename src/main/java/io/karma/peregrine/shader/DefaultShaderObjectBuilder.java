@@ -16,6 +16,7 @@
 
 package io.karma.peregrine.shader;
 
+import io.karma.peregrine.PeregrineMod;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -30,7 +31,7 @@ import java.util.function.Supplier;
 public final class DefaultShaderObjectBuilder implements ShaderObjectBuilder {
     private ShaderType type;
     private ResourceLocation location;
-    private Supplier<ShaderPreProcessor> shaderPreProcessorSupplier;
+    private Supplier<ShaderPreProcessor> shaderPreProcessorSupplier = () -> PeregrineMod.SHADER_PRE_PROCESSOR;
 
     // @formatter:off
     DefaultShaderObjectBuilder() {}

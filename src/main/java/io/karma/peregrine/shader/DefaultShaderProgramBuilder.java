@@ -18,7 +18,7 @@ package io.karma.peregrine.shader;
 
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import io.karma.peregrine.Peregrine;
+import io.karma.peregrine.PeregrineMod;
 import io.karma.peregrine.buffer.UniformBuffer;
 import io.karma.peregrine.texture.Texture;
 import io.karma.peregrine.uniform.Uniform;
@@ -49,7 +49,7 @@ public class DefaultShaderProgramBuilder implements ShaderProgramBuilder {
     private final Object2IntOpenHashMap<String> samplers = new Object2IntOpenHashMap<>();
     private final Int2ObjectArrayMap<IntSupplier> staticSamplers = new Int2ObjectArrayMap<>();
     private final LinkedHashMap<String, Object> defines = new LinkedHashMap<>();
-    private Supplier<ShaderLoader> shaderLoaderSupplier = Peregrine::getDefaultShaderLoader;
+    private Supplier<ShaderLoader> shaderLoaderSupplier = () -> PeregrineMod.SHADER_LOADER;
     private VertexFormat format = DefaultVertexFormat.POSITION;
     private Consumer<ShaderProgram> bindCallback = IDENTITY_CALLBACK;
     private Consumer<ShaderProgram> unbindCallback = IDENTITY_CALLBACK;
@@ -230,7 +230,7 @@ public class DefaultShaderProgramBuilder implements ShaderProgramBuilder {
 
     @Override
     public ShaderProgramBuilder globalUniforms() {
-        uniforms("Globals", Peregrine.getGlobalUniforms());
+        uniforms("Globals", PeregrineMod.getGlobalUniforms());
         return this;
     }
 }
