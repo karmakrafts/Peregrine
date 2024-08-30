@@ -14,21 +14,26 @@
  *  limitations under the License.
  */
 
-package io.karma.peregrine.reload;
+package io.karma.peregrine.util;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-
-import java.util.List;
+import javax.annotation.Nullable;
+import java.util.HashMap;
 
 /**
  * @author Alexander Hinze
- * @since 29/08/2024
+ * @since 30/08/2024
  */
-public interface ReloadHandler {
-    void register(final Reloadable reloadable);
+public final class DI {
+    private final HashMap<Class<?>, Object> instances = new HashMap<>();
 
-    void unregister(final Reloadable reloadable);
+    public DI() {}
 
-    List<Reloadable> getObjects();
+    public <T, U extends T> void put(final Class<T> type, final U instance) {
+        instances.put(type, instance);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> @Nullable T get(final Class<T> type) {
+        return (T) instances.get(type);
+    }
 }

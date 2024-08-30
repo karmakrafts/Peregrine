@@ -27,7 +27,6 @@ import java.util.Comparator;
  * @author Alexander Hinze
  * @since 29/08/2024
  */
-@OnlyIn(Dist.CLIENT)
 @FunctionalInterface
 public interface Reloadable {
     int DEFAULT_PRIORITY = 0;

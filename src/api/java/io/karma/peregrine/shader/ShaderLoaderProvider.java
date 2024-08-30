@@ -14,21 +14,18 @@
  *  limitations under the License.
  */
 
-package io.karma.peregrine.reload;
+package io.karma.peregrine.shader;
 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * @author Alexander Hinze
- * @since 29/08/2024
+ * @since 30/08/2024
  */
-public interface ReloadHandler {
-    void register(final Reloadable reloadable);
-
-    void unregister(final Reloadable reloadable);
-
-    List<Reloadable> getObjects();
+@FunctionalInterface
+@OnlyIn(Dist.CLIENT)
+public interface ShaderLoaderProvider extends Supplier<ShaderLoader> {
 }

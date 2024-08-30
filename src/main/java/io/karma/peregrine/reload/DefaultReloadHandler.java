@@ -38,7 +38,6 @@ import java.util.concurrent.Executor;
  * @author Alexander Hinze
  * @since 29/08/2024
  */
-@OnlyIn(Dist.CLIENT)
 public final class DefaultReloadHandler implements ReloadHandler, PreparableReloadListener {
     private final ConcurrentLinkedQueue<Reloadable> objects = new ConcurrentLinkedQueue<>();
 

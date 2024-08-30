@@ -14,21 +14,12 @@
  *  limitations under the License.
  */
 
-package io.karma.peregrine.reload;
-
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-
-import java.util.List;
+package io.karma.peregrine.font;
 
 /**
  * @author Alexander Hinze
- * @since 29/08/2024
+ * @since 30/08/2024
  */
-public interface ReloadHandler {
-    void register(final Reloadable reloadable);
-
-    void unregister(final Reloadable reloadable);
-
-    List<Reloadable> getObjects();
+public enum FontStyle {
+    REGULAR, BOLD, ITALIC
 }

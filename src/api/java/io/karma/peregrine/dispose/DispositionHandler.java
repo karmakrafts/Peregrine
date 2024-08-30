@@ -16,16 +16,12 @@
 
 package io.karma.peregrine.dispose;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-
 import java.util.List;
 
 /**
  * @author Alexander Hinze
  * @since 29/08/2024
  */
-@OnlyIn(Dist.CLIENT)
 public interface DispositionHandler {
     void register(final Disposable disposable);
 

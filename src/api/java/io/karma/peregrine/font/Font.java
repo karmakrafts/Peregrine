@@ -14,21 +14,29 @@
  *  limitations under the License.
  */
 
-package io.karma.peregrine.reload;
+package io.karma.peregrine.font;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-
-import java.util.List;
+import it.unimi.dsi.fastutil.objects.Object2FloatMap;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * @author Alexander Hinze
- * @since 29/08/2024
+ * @since 30/08/2024
  */
-public interface ReloadHandler {
-    void register(final Reloadable reloadable);
+public interface Font {
+    FontFamily getFamily();
 
-    void unregister(final Reloadable reloadable);
+    FontCharSet getSupportedChars();
 
-    List<Reloadable> getObjects();
+    ResourceLocation getLocation();
+
+    FontVariant getDefaultVariant();
+
+    Object2FloatMap<String> getVariationAxes();
+
+    float getVariationAxis(final String name);
+
+    default FontVariant asVariant() {
+        return this instanceof FontVariant variant ? variant : getDefaultVariant();
+    }
 }

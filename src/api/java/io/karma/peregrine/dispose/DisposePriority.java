@@ -28,7 +28,6 @@ import java.lang.annotation.Target;
  * @author Alexander Hinze
  * @since 29/08/2024
  */
-@OnlyIn(Dist.CLIENT)
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface DisposePriority {

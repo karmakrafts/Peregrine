@@ -18,15 +18,19 @@ package io.karma.peregrine;
 
 import io.karma.peregrine.buffer.DefaultUniformBufferBuilder;
 import io.karma.peregrine.buffer.UniformBuffer;
+import io.karma.peregrine.buffer.UniformBufferFactory;
+import io.karma.peregrine.buffer.UniformBufferProvider;
 import io.karma.peregrine.dispose.DefaultDispositionHandler;
 import io.karma.peregrine.reload.DefaultReloadHandler;
 import io.karma.peregrine.shader.DefaultShaderLoader;
 import io.karma.peregrine.shader.DefaultShaderProgramBuilder;
+import io.karma.peregrine.shader.ShaderLoaderProvider;
+import io.karma.peregrine.shader.ShaderProgramFactory;
 import io.karma.peregrine.texture.DefaultTextureFactories;
-import io.karma.peregrine.uniform.DefaultUniformTypeFactories;
-import io.karma.peregrine.uniform.MatrixType;
-import io.karma.peregrine.uniform.ScalarType;
-import io.karma.peregrine.uniform.VectorType;
+import io.karma.peregrine.texture.TextureFactories;
+import io.karma.peregrine.uniform.*;
+import io.karma.peregrine.util.DI;
+import io.karma.peregrine.util.ShaderBinaryFormat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraftforge.api.distmarker.Dist;
@@ -36,6 +40,9 @@ import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.event.GameShuttingDownEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.NewRegistryEvent;
+import net.minecraftforge.registries.RegistryBuilder;
 import org.jetbrains.annotations.ApiStatus.Internal;
 import org.lwjgl.opengl.ARBGetProgramBinary;
 import org.lwjgl.opengl.GL;
@@ -52,12 +59,13 @@ import java.util.concurrent.TimeUnit;
  */
 @Mod(Peregrine.MODID)
 public final class PeregrineMod {
-    @OnlyIn(Dist.CLIENT)
     @Internal
     public static final DefaultReloadHandler RELOAD_HANDLER = new DefaultReloadHandler();
-    @OnlyIn(Dist.CLIENT)
     @Internal
     public static final DefaultDispositionHandler DISPOSE_HANDLER = new DefaultDispositionHandler();
+    @Internal
+    public static final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool();
+
     @OnlyIn(Dist.CLIENT)
     @Internal
     public static final DefaultUniformTypeFactories UNIFORM_TYPE_FACTORIES = new DefaultUniformTypeFactories();
@@ -67,9 +75,6 @@ public final class PeregrineMod {
     @OnlyIn(Dist.CLIENT)
     @Internal
     public static final DefaultShaderLoader SHADER_LOADER = new DefaultShaderLoader();
-    @OnlyIn(Dist.CLIENT)
-    @Internal
-    public static final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool();
 
     // @formatter:off
     @OnlyIn(Dist.CLIENT)
@@ -81,27 +86,33 @@ public final class PeregrineMod {
     // @formatter:on
 
     public PeregrineMod() {
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onCreateRegistries);
+        MinecraftForge.EVENT_BUS.addListener(this::onGameShutdown);
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
-            MinecraftForge.EVENT_BUS.addListener(this::onClientShutdown);
             ((ReloadableResourceManager) Minecraft.getInstance().getResourceManager()).registerReloadListener(
                 RELOAD_HANDLER);
-            Minecraft.getInstance().execute(() -> {
-                Peregrine.init(EXECUTOR_SERVICE,
-                    RELOAD_HANDLER,
-                    DISPOSE_HANDLER,
-                    UNIFORM_TYPE_FACTORIES,
-                    TEXTURE_FACTORIES,
-                    DefaultUniformBufferBuilder::build,
-                    DefaultShaderProgramBuilder::build,
-                    () -> SHADER_LOADER,
-                    GLOBAL_UNIFORMS,
-                    detectShaderBinaryFormat());
+        });
+        Minecraft.getInstance().execute(() -> {
+            final var di = new DI();
+            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+                di.put(TextureFactories.class, TEXTURE_FACTORIES);
+                di.put(UniformTypeFactories.class, UNIFORM_TYPE_FACTORIES);
+                di.put(UniformBufferFactory.class, DefaultUniformBufferBuilder::build);
+                di.put(ShaderProgramFactory.class, DefaultShaderProgramBuilder::build);
+                di.put(ShaderLoaderProvider.class, () -> SHADER_LOADER);
+                di.put(UniformBufferProvider.class, GLOBAL_UNIFORMS::get);
+                di.put(ShaderBinaryFormat.class, new ShaderBinaryFormat(detectShaderBinaryFormat()));
             });
+            Peregrine.init(EXECUTOR_SERVICE, RELOAD_HANDLER, DISPOSE_HANDLER, di);
         });
     }
 
-    @OnlyIn(Dist.CLIENT)
-    private void onClientShutdown(final GameShuttingDownEvent event) {
+    private void onCreateRegistries(final NewRegistryEvent event) {
+        Peregrine.LOGGER.info("Creating registries");
+        event.create(RegistryBuilder.of(Peregrine.FONT_FAMILY_REGISTRY_NAME));
+    }
+
+    private void onGameShutdown(final GameShuttingDownEvent event) {
         try {
             EXECUTOR_SERVICE.shutdown();
             if (EXECUTOR_SERVICE.awaitTermination(5, TimeUnit.SECONDS)) {

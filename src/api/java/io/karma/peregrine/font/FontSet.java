@@ -14,21 +14,30 @@
  *  limitations under the License.
  */
 
-package io.karma.peregrine.reload;
-
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-
-import java.util.List;
+package io.karma.peregrine.font;
 
 /**
  * @author Alexander Hinze
- * @since 29/08/2024
+ * @since 30/08/2024
  */
-public interface ReloadHandler {
-    void register(final Reloadable reloadable);
+public interface FontSet {
+    static FontSet of(final Font heading1, final Font heading2, final Font heading3, final Font text) {
+        return new DefaultFontSet(heading1, heading2, heading3, text);
+    }
 
-    void unregister(final Reloadable reloadable);
+    static FontSet of(final Font headings, final Font text) {
+        return new DefaultFontSet(headings, headings, headings, text);
+    }
 
-    List<Reloadable> getObjects();
+    static FontSet of(final Font font) {
+        return new DefaultFontSet(font, font, font, font);
+    }
+
+    Font getHeading1();
+
+    Font getHeading2();
+
+    Font getHeading3();
+
+    Font getText();
 }
