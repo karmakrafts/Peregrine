@@ -44,7 +44,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Supplier;
 
 /**
  * @author Alexander Hinze
@@ -258,6 +257,12 @@ public final class Peregrine {
     public static UniformBuffer getGlobalUniforms() {
         ensureInitialized();
         return globalUniforms.get();
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public static ShaderPreProcessor getDefaultShaderPreProcessor() {
+        ensureInitialized();
+        return defaultShaderPreProcessor.get();
     }
 
     @OnlyIn(Dist.CLIENT)
