@@ -1,0 +1,39 @@
+[versions]
+peregrine = "1.0.0"
+minecraft = "1.20.1"
+minecraftForge = "1.20.1-47.2.30"
+mappings = "2023.09.03" # https://parchmentmc.org/docs/getting-started
+forge = "47.2.30" # https://files.minecraftforge.net/net/minecraftforge/forge/index_1.20.1.html
+forgeGradle = "6.0.26" # https://files.minecraftforge.net/net/minecraftforge/gradle/ForgeGradle/index.html
+mixinGradle = "0.7.38" # https://repo.spongepowered.org/#browse/browse:maven-public:org%2Fspongepowered%2Fmixingradle
+librarian = "1.2.0" # https://github.com/ParchmentMC/Librarian/tags
+shadow = "8.1.1" # https://github.com/johnrengelman/shadow/releases
+dokka = "1.9.20" # https://github.com/Kotlin/dokka/releases
+
+embeddium = "0.3.30-beta.48+mc1.20.1" # https://maven.blamejared.com/org/embeddedt/
+oculus = "5299671" # https://www.curseforge.com/minecraft/mc-mods/oculus/files/all?page=1&pageSize=20
+
+annotations = "24.1.0" # https://github.com/JetBrains/java-annotations/releases
+batik = "1.17" # https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-dom
+jackson = "2.17.2" # https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
+junit = "5.10.3" # https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
+
+[libraries]
+minecraftForge = { module = "net.minecraftforge:forge", version.ref = "minecraftForge" }
+
+annotations = { module = "org.jetbrains:annotations", version.ref = "annotations" }
+jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson" }
+jackson-annotationns = { module = "com.fasterxml.jackson.core:jackson-annotations", version.ref = "jackson" }
+jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
+junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
+junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
+
+embeddium = { module = "org.embeddedt:embeddium-1.20.1", version.ref = "embeddium" }
+oculus = { module = "curse.maven:oculus-581495", version.ref = "oculus" }
+
+[plugins]
+forgeGradle = { id = "net.minecraftforge.gradle", version.ref = "forgeGradle" }
+mixinGradle = { id = "org.spongepowered.mixin", version.ref = "mixinGradle" }
+librarian = { id = "org.parchmentmc.librarian.forgegradle", version.ref = "librarian" }
+shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
+dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
