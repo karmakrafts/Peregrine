@@ -24,9 +24,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Runtime hint for the {@link io.karma.peregrine.reload.ReloadHandler}
+ * Runtime hint for the {@link io.karma.peregrine.dispose.DispositionHandler}
  * to overwrite an objects disposition priority without overwriting code
- * from {@link io.karma.peregrine.reload.Reloadable}.
+ * from {@link io.karma.peregrine.dispose.Disposable}.
  *
  * @author Alexander Hinze
  * @since 29/08/2024

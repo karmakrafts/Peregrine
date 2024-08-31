@@ -21,6 +21,9 @@ import io.karma.peregrine.util.Dispatcher;
 import java.util.Comparator;
 
 /**
+ * Describes an object which allocates resources
+ * that cannot be freed by the runtimes garbage collector.
+ *
  * @author Alexander Hinze
  * @since 29/08/2024
  */
@@ -67,7 +70,7 @@ public interface Disposable {
      */
     default Dispatcher getDisposeDispatcher() {
         final var clazz = getClass();
-        if(!clazz.isAnnotationPresent(DisposePriority.class)) {
+        if (!clazz.isAnnotationPresent(DisposePriority.class)) {
             return Dispatcher.MAIN;
         }
         return clazz.getAnnotation(DisposePriority.class).dispatcher();

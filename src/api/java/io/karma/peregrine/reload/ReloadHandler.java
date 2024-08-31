@@ -19,13 +19,32 @@ package io.karma.peregrine.reload;
 import java.util.List;
 
 /**
+ * Describes an interface which allows to register and unregister
+ * objects which may be reloaded by the games in-game reloading mechanism.
+ * This may include but is not limited to shaders and textures.
+ *
  * @author Alexander Hinze
  * @since 29/08/2024
  */
 public interface ReloadHandler {
+    /**
+     * Register the given object to be reloaded by this reload handler.
+     *
+     * @param reloadable The object to be registered.
+     */
     void register(final Reloadable reloadable);
 
+    /**
+     * Unregister the given object to be no longer reloaded by this reload handler.
+     *
+     * @param reloadable The object to be unregistered.
+     */
     void unregister(final Reloadable reloadable);
 
+    /**
+     * Retrieves all objects registered with this reload handler.
+     *
+     * @return all objects registered with this reload handler.
+     */
     List<Reloadable> getObjects();
 }
