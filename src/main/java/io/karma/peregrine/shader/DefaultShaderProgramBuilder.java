@@ -49,7 +49,7 @@ public class DefaultShaderProgramBuilder implements ShaderProgramBuilder {
     private final Object2IntOpenHashMap<String> samplers = new Object2IntOpenHashMap<>();
     private final Int2ObjectArrayMap<IntSupplier> staticSamplers = new Int2ObjectArrayMap<>();
     private final LinkedHashMap<String, Object> defines = new LinkedHashMap<>();
-    private Supplier<ShaderLoader> shaderLoaderSupplier = () -> PeregrineMod.SHADER_LOADER;
+    private Supplier<ShaderLoader> shaderLoaderSupplier = PeregrineMod.SHADER_LOADER;
     private VertexFormat format = DefaultVertexFormat.POSITION;
     private Consumer<ShaderProgram> bindCallback = IDENTITY_CALLBACK;
     private Consumer<ShaderProgram> unbindCallback = IDENTITY_CALLBACK;
