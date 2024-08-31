@@ -20,6 +20,10 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
+ * Represents a binary shader format supported
+ * by the current OpenGL implementation.
+ * This wrapper type is used in the initialization {@link io.karma.peregrine.util.DI}.
+ *
  * @author Alexander Hinze
  * @since 30/08/2024
  */
