@@ -83,10 +83,16 @@ public final class PeregrineMod {
     public static final DefaultTextureFactories TEXTURE_FACTORIES = new DefaultTextureFactories();
     @OnlyIn(Dist.CLIENT)
     @Internal
-    public static final DefaultShaderLoader SHADER_LOADER = new DefaultShaderLoader();
+    public static final DefaultShaderPreProcessor SHADER_PRE_PROCESSOR = new DefaultShaderPreProcessor();
+
     @OnlyIn(Dist.CLIENT)
     @Internal
-    public static final DefaultShaderPreProcessor SHADER_PRE_PROCESSOR = new DefaultShaderPreProcessor();
+    public static final Lazy<ShaderLoader> SHADER_LOADER = Lazy.of(() -> {
+        if(Peregrine.supportsBinaryShaderCaching()) {
+            return new BinaryShaderLoader();
+        }
+        return new DefaultShaderLoader();
+    });
 
     // @formatter:off
     @OnlyIn(Dist.CLIENT)
@@ -157,7 +163,7 @@ public final class PeregrineMod {
                 di.put(UniformTypeFactories.class, UNIFORM_TYPE_FACTORIES);
                 di.put(UniformBufferFactory.class, DefaultUniformBufferBuilder::build);
                 di.put(ShaderProgramFactory.class, DefaultShaderProgramBuilder::build);
-                di.put(ShaderLoaderProvider.class, () -> SHADER_LOADER);
+                di.put(ShaderLoaderProvider.class, SHADER_LOADER::get);
                 di.put(UniformBufferProvider.class, GLOBAL_UNIFORMS::get);
                 di.put(ShaderPreProcessorProvider.class, () -> SHADER_PRE_PROCESSOR);
                 di.put(ShaderBinaryFormat.class, new ShaderBinaryFormat(detectShaderBinaryFormat()));

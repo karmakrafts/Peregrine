@@ -69,13 +69,13 @@ public final class DefaultShaderLoader extends AbstractShaderLoader {
         if (Files.exists(file)) {
             if (!Files.exists(fingerprintFile)) {
                 Peregrine.LOGGER.error("Shader {} missing fingerprint file, aborting", location);
-                return new LoadResult(false, false);
+                return LoadResult.NONE;
             }
             final var previousFingerprint = loadText(fingerprintFile);
             if (Objects.requireNonNull(HashUtils.toFingerprint(source)).equals(previousFingerprint)) {
                 Peregrine.LOGGER.debug("Shader cache hit for {}", location);
                 GL20.glShaderSource(object.getId(), loadText(file));
-                return new LoadResult(true, false);
+                return LoadResult.COMPILE;
             }
             else {
                 try {
@@ -97,6 +97,6 @@ public final class DefaultShaderLoader extends AbstractShaderLoader {
         Peregrine.LOGGER.debug("Shader cache miss for {}", location);
         GL20.glShaderSource(object.getId(),
             object.getPreProcessor().process(source, program, object, loc -> loadSource(resourceProvider, loc)));
-        return new LoadResult(true, true);
+        return LoadResult.COMPILE_AND_SAVE;
     }
 }

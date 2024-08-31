@@ -54,5 +54,8 @@ public interface ShaderLoader {
                     final ShaderObject object);
 
     record LoadResult(boolean shouldCompile, boolean shouldSave) {
+        public static final LoadResult COMPILE = new LoadResult(true, false);
+        public static final LoadResult NONE = new LoadResult(false, false);
+        public static final LoadResult COMPILE_AND_SAVE = new LoadResult(true, true);
     }
 }
