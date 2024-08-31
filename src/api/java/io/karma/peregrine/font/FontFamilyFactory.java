@@ -21,6 +21,9 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.function.Function;
 
 /**
+ * A type alias for a function which maps a {@link ResourceLocation} to a {@link FontFamily}.
+ * Can be used for creating new registry entries.
+ *
  * @author Alexander Hinze
  * @since 30/08/2024
  */

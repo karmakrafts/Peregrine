@@ -21,12 +21,27 @@ import it.unimi.dsi.fastutil.chars.CharOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntIntPair;
 
 /**
+ * Describes a set of characters supported
+ * by a given font.
+ *
  * @author Alexander Hinze
  * @since 30/08/2024
  */
 public interface FontCharSet {
+    /**
+     * Retrieves all characters ranges supported by
+     * a given font.
+     *
+     * @return all character ranges supported by a given font.
+     */
     IntIntPair[] getRanges();
 
+    /**
+     * Determines the total number of characters supported
+     * by a given font, contained within this set.
+     *
+     * @return the total number of characters supported by a given font.
+     */
     default int getCharCount() {
         var charCount = 0;
         for (final var range : getRanges()) {
@@ -35,6 +50,12 @@ public interface FontCharSet {
         return charCount;
     }
 
+    /**
+     * Creates an array which contains all expanded
+     * character ranges contained within this set.
+     *
+     * @return a new array which contains all expanded character ranges contained within this set.
+     */
     default char[] toArray() {
         final var chars = new CharArrayList(getCharCount());
         for (final var range : getRanges()) {
@@ -45,6 +66,12 @@ public interface FontCharSet {
         return chars.toCharArray();
     }
 
+    /**
+     * Creates a new hash set which contains all expanded
+     * character ranges contained within this set.
+     *
+     * @return a new hash set which contains all expanded character ranges contained within this set.
+     */
     default CharOpenHashSet toSet() {
         final var set = new CharOpenHashSet(getCharCount());
         for (final var range : getRanges()) {

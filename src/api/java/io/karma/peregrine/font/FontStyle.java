@@ -17,6 +17,8 @@
 package io.karma.peregrine.font;
 
 /**
+ * All possible styles a font family can have.
+ *
  * @author Alexander Hinze
  * @since 30/08/2024
  */

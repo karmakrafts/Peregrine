@@ -17,26 +17,81 @@
 package io.karma.peregrine.font;
 
 /**
+ * Describes a variant of a given font with a specified
+ * size, style and variation axes.
+ *
  * @author Alexander Hinze
  * @since 30/08/2024
  */
 public interface FontVariant extends Font {
+    /**
+     * The default font variant size in points.
+     */
     float DEFAULT_SIZE = 16F;
 
+    /**
+     * Retrieves the style of this font variant.
+     *
+     * @return the style of this font variant.
+     */
     FontStyle getStyle();
 
+    /**
+     * Retrieves the size of this font variant in points.
+     *
+     * @return the size of this font variant in points.
+     */
     float getSize();
 
+    /**
+     * Derives a new font variant from this variant
+     * with the new given style.
+     *
+     * @param style the new style to derive from this font variant.
+     * @return a font variant identical to this one with the new given style.
+     */
     FontVariant withStyle(final FontStyle style);
 
+    /**
+     * Derives a new font variant from this variant
+     * with the new given size in points.
+     *
+     * @param size the new style to derive from this font variant.
+     * @return a font variant identical to this one with the new given size in points.
+     */
     FontVariant withSize(final float size);
 
+    /**
+     * Derives a new font variant from this variant
+     * with the new given variation axis.
+     *
+     * @param name  the name of the variation axis to specify.
+     * @param value the value of the variation axis to specify.
+     * @return a font variant identical to this one with the new given variation axis.
+     */
     FontVariant withVar(final String name, final float value);
 
+    /**
+     * Derives a new font variant from this variant
+     * with the new given style and size.
+     *
+     * @param style the new style to derive from this font variant.
+     * @param size  the new size to derive from this font variant in points.
+     * @return a font variant identical to this one with the new given style and size in points.
+     */
     default FontVariant derive(final FontStyle style, final float size) {
         return withStyle(style).withSize(size);
     }
 
+    /**
+     * Computes a string which conforms to the pattern
+     * specified by {@link net.minecraft.resources.ResourceLocation}
+     * in order to be usable in file names/paths that
+     * uniquely identifies this font variant.
+     *
+     * @return a string that uniquely identifies this font variant
+     * and conforms to the pattern specified by {@link net.minecraft.resources.ResourceLocation}.
+     */
     default String getVariantString() { // @formatter:off
         final var builder = new StringBuilder();
         final var path = getLocation().getPath();
