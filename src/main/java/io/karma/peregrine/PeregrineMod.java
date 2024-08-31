@@ -31,7 +31,7 @@ import io.karma.peregrine.texture.DefaultTextureFactories;
 import io.karma.peregrine.texture.TextureFactories;
 import io.karma.peregrine.uniform.*;
 import io.karma.peregrine.util.DI;
-import io.karma.peregrine.util.ShaderBinaryFormat;
+import io.karma.peregrine.shader.ShaderBinaryFormat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraftforge.api.distmarker.Dist;

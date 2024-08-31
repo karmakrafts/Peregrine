@@ -14,15 +14,46 @@
  *  limitations under the License.
  */
 
-package io.karma.peregrine.util;
+package io.karma.peregrine.font;
 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
  * @author Alexander Hinze
- * @since 30/08/2024
+ * @since 31/08/2024
  */
 @OnlyIn(Dist.CLIENT)
-public record ShaderBinaryFormat(int value) {
+public final class DefaultGlyphSprite implements GlyphSprite {
+    private final GlyphMetrics metrics;
+    private final int size;
+    private final float u;
+    private final float v;
+
+    public DefaultGlyphSprite(final GlyphMetrics metrics, final int size, final float u, final float v) {
+        this.metrics = metrics;
+        this.size = size;
+        this.u = u;
+        this.v = v;
+    }
+
+    @Override
+    public GlyphMetrics getMetrics() {
+        return metrics;
+    }
+
+    @Override
+    public int getSize() {
+        return size;
+    }
+
+    @Override
+    public float getU() {
+        return u;
+    }
+
+    @Override
+    public float getV() {
+        return v;
+    }
 }

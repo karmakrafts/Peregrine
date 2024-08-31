@@ -76,6 +76,7 @@ fun SourceSetContainer.createDefault(name: String): SourceSet = create(name) {
 val apiSourceSet = sourceSets.createDefault("api")
 
 // Configs
+val apiCompileOnlyConfig = configurations.getByName("apiCompileOnly")
 val coreLibraryConfig = configurations.create("coreLibrary")
 val libraryConfig = configurations.create("library") {
     extendsFrom(coreLibraryConfig)
@@ -108,6 +109,7 @@ repositories {
 }
 
 fun DependencyHandlerScope.localLwjglModule(name: String) {
+    apiCompileOnlyConfig(files(projectPath / "libs" / "lwjgl-$name.jar"))
     libraryConfig(files(projectPath / "libs" / "lwjgl-$name.jar"))
     compileOnly(files(projectPath / "libs" / "lwjgl-$name-javadoc.jar"))
     compileOnly(files(projectPath / "libs" / "lwjgl-$name-sources.jar"))

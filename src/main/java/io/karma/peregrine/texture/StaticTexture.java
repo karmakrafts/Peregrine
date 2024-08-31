@@ -18,7 +18,6 @@ package io.karma.peregrine.texture;
 
 import io.karma.peregrine.Peregrine;
 import io.karma.peregrine.PeregrineMod;
-import io.karma.peregrine.util.TextureUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceProvider;
 import net.minecraftforge.api.distmarker.Dist;

@@ -14,9 +14,10 @@
  *  limitations under the License.
  */
 
-package io.karma.peregrine.util;
+package io.karma.peregrine.texture;
 
 import io.karma.peregrine.Peregrine;
+import io.karma.peregrine.util.DSA;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;

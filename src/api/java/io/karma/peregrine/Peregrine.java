@@ -27,7 +27,7 @@ import io.karma.peregrine.shader.*;
 import io.karma.peregrine.texture.TextureFactories;
 import io.karma.peregrine.uniform.UniformTypeFactories;
 import io.karma.peregrine.util.DI;
-import io.karma.peregrine.util.ShaderBinaryFormat;
+import io.karma.peregrine.shader.ShaderBinaryFormat;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
