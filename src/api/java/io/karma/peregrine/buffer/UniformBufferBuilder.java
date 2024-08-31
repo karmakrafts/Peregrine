@@ -24,14 +24,38 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import java.util.function.BiConsumer;
 
 /**
+ * Describes a builder pattern for creating new
+ * immutable uniform buffer objects.
+ *
  * @author Alexander Hinze
  * @since 30/08/2024
  */
 @OnlyIn(Dist.CLIENT)
 public interface UniformBufferBuilder {
+    /**
+     * Add a uniform with the given name to the newly created uniform buffer.
+     *
+     * @param name The name of the uniform to add. Must match the variable name in GLSL.
+     * @param type The type of the uniform variable.
+     * @return This builder instance.
+     */
     UniformBufferBuilder uniform(final String name, final UniformType type);
 
+    /**
+     * Adds a callback to this uniform buffer which is invoked every time
+     * the newly created buffer is being bound by a shader program.
+     *
+     * @param callback The callback to add to the newly created uniform buffer.
+     * @return This builder instance.
+     */
     UniformBufferBuilder onBind(final BiConsumer<ShaderProgram, UniformBuffer> callback);
 
+    /**
+     * Adds a callback to this uniform buffer which is invoked every time
+     * the nenwly created buffer is being unbound by a shader program.
+     *
+     * @param callback The callback to add to the newly created uniform buffer.
+     * @return This builder instance.
+     */
     UniformBufferBuilder onUnbind(final BiConsumer<ShaderProgram, UniformBuffer> callback);
 }

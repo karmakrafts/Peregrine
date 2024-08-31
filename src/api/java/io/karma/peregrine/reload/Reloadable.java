@@ -16,7 +16,7 @@
 
 package io.karma.peregrine.reload;
 
-import io.karma.peregrine.Dispatcher;
+import io.karma.peregrine.util.Dispatcher;
 import net.minecraft.server.packs.resources.ResourceProvider;
 
 import java.util.Comparator;

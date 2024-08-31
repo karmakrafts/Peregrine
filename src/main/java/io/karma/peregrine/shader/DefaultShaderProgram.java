@@ -202,7 +202,6 @@ public final class DefaultShaderProgram extends ShaderStateShard implements Shad
             setupAttributes();
             var shouldLink = true;
             for (final var object : objects) {
-                object.attach(this);
                 shouldLink &= object.recompile(cacheDir, this, resourceProvider);
             }
             if (shouldLink) {

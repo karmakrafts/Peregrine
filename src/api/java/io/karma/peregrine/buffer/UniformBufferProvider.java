@@ -22,6 +22,9 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import java.util.function.Supplier;
 
 /**
+ * A type alias for a function which supplies a {@link UniformBuffer}.
+ * See {@link Supplier}.
+ *
  * @author Alexander Hinze
  * @since 30/08/2024
  */

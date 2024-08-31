@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package io.karma.peregrine;
+package io.karma.peregrine.util;
 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;

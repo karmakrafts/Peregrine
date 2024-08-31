@@ -19,15 +19,38 @@ package io.karma.peregrine.dispose;
 import java.util.List;
 
 /**
+ * Describes an interface which allows to register, unregister
+ * and dispose objects which allocate native resources.
+ * This may include but is not limited to shaders and textures.
+ *
  * @author Alexander Hinze
  * @since 29/08/2024
  */
 public interface DispositionHandler {
+    /**
+     * Register the given object to be disposed by this disposition handler.
+     *
+     * @param disposable The object to be registered.
+     */
     void register(final Disposable disposable);
 
+    /**
+     * Unregister the given object to be no longer disposed by this disposition handler.
+     *
+     * @param disposable The object to be unregistered.
+     */
     void unregister(final Disposable disposable);
 
+    /**
+     * Dispose all objects registered to this disposition handler instance
+     * using the specified dispatchers.
+     */
     void disposeAll();
 
+    /**
+     * Retrieves all objects registered with this disposition handler.
+     *
+     * @return all objects registered with this disposition handler.
+     */
     List<Disposable> getObjects();
 }

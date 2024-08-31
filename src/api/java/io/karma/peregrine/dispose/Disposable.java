@@ -16,7 +16,7 @@
 
 package io.karma.peregrine.dispose;
 
-import io.karma.peregrine.Dispatcher;
+import io.karma.peregrine.util.Dispatcher;
 
 import java.util.Comparator;
 
@@ -66,7 +66,11 @@ public interface Disposable {
      * function of this disposable object.
      */
     default Dispatcher getDisposeDispatcher() {
-        return Dispatcher.MAIN;
+        final var clazz = getClass();
+        if(!clazz.isAnnotationPresent(DisposePriority.class)) {
+            return Dispatcher.MAIN;
+        }
+        return clazz.getAnnotation(DisposePriority.class).dispatcher();
     }
 
     /**

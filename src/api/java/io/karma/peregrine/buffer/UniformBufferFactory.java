@@ -23,6 +23,10 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
+ * A type alias for a function which maps
+ * a {@link Consumer<UniformBufferBuilder>} to a {@link UniformBuffer}.
+ * See {@link Function}.
+ *
  * @author Alexander Hinze
  * @since 30/08/2024
  */

@@ -21,6 +21,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
+ * A generic buffer object which represents a given
+ * amount of memory on one of the systems GPUs.
+ *
  * @author Alexander Hinze
  * @since 29/08/2024
  */
