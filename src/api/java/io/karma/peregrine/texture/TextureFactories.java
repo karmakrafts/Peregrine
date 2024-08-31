@@ -21,10 +21,25 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
+ * Describes an interface for creating static
+ * and dynamic texture objects which are automatically
+ * managed by the Peregrine runtime.
+ *
  * @author Alexander Hinze
  * @since 30/08/2024
  */
 @OnlyIn(Dist.CLIENT)
 public interface TextureFactories {
+    /**
+     * Retrieves a static texture object which contains
+     * the image data of the given texture resource.
+     * Creates a new static texture if none has been
+     * created for the given resource location.
+     *
+     * @param location the location of the image resource to load
+     *                 into the newly created texture object.
+     * @return a new texture object which contains the image data
+     * of the given texture resource.
+     */
     Texture get(final ResourceLocation location);
 }
