@@ -16,6 +16,7 @@
 
 package io.karma.peregrine.shader;
 
+import io.karma.peregrine.Peregrine;
 import io.karma.peregrine.PeregrineMod;
 import io.karma.peregrine.util.ToBooleanBiFunction;
 import net.minecraft.resources.ResourceLocation;
@@ -213,17 +214,17 @@ public final class DefaultShaderPreProcessor implements ShaderPreProcessor {
 
     private static Map<String, Object> insertBuiltinDefines(final ShaderType type, final Map<String, Object> defines) {
         final var allDefines = new LinkedHashMap<>(defines);
+
         allDefines.put("BUILTIN_DEBUG", PeregrineMod.isDevelopmentEnvironment() ? 1 : 0);
         allDefines.put("BUILTIN_PRINT_BUFFER_SIZE", PRINT_BUFFER_SIZE);
         allDefines.put("BUILTIN_SHADER_TYPE", type.ordinal());
         allDefines.put("BUILTIN_HAS_SODIUM", PeregrineMod.isSodiumInstalled() ? 1 : 0);
         allDefines.put("BUILTIN_HAS_IRIS", PeregrineMod.isIrisInstalled() ? 1 : 0);
 
-        // TODO: fix these
-        //allDefines.put("BUILTIN_BINDLESS_SUPPORT", StaticSampler.IS_SUPPORTED ? 1 : 0);
-        //allDefines.put("BUILTIN_SSBO_SUPPORT", SSBO.IS_SUPPORTED ? 1 : 0);
-        //allDefines.put("BUILTIN_LONG_SUPPORT", DefaultUniformType.LONG.isSupported() ? 1 : 0);
-        //allDefines.put("BUILTIN_DOUBLE_SUPPORT", 0); // TODO: implement this
+        allDefines.put("BUILTIN_BINDLESS_SUPPORT", Peregrine.supportsBindlessTextures() ? 1 : 0);
+        allDefines.put("BUILTIN_SSBO_SUPPORT", Peregrine.supportsStorageBuffers() ? 1 : 0);
+        allDefines.put("BUILTIN_LONG_SUPPORT", Peregrine.supportsLongShaderType() ? 1 : 0);
+        allDefines.put("BUILTIN_DOUBLE_SUPPORT", Peregrine.supportsDoubleShaderType() ? 1 : 0);
 
         final var glVersion = Objects.requireNonNull(GL11.glGetString(GL11.GL_VERSION));
         final var glVersionMatcher = GL_VERSION_PATTERN.matcher(glVersion);
