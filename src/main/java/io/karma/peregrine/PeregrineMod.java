@@ -174,6 +174,14 @@ public final class PeregrineMod {
         });
     }
 
+    public float getPartialTicks() {
+        return partialTicks;
+    }
+
+    public static PeregrineMod getInstance() {
+        return instance;
+    }
+
     public static boolean isDevelopmentEnvironment() {
         return isDevEnvironment;
     }
