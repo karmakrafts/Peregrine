@@ -23,18 +23,52 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import java.util.function.Supplier;
 
 /**
+ * Describes a builder pattern for creating
+ * new immutable shader objects.
+ *
  * @author Alexander Hinze
  * @since 30/08/2024
  */
 @OnlyIn(Dist.CLIENT)
 public interface ShaderObjectBuilder {
+    /**
+     * Specifies the type of the newly created {@link ShaderObject}.
+     *
+     * @param type the type of the newly created {@link ShaderObject}.
+     * @return this builder instance.
+     */
     ShaderObjectBuilder type(final ShaderType type);
 
+    /**
+     * Specifies the location of the GLSL source used by
+     * the newly created shader object.
+     *
+     * @param location the location of the GLSL source used
+     *                 by the newly created {@link ShaderObject}.
+     * @return this builder instance.
+     */
     ShaderObjectBuilder location(final ResourceLocation location);
 
+    /**
+     * Specifies the location of the GLSL source used by
+     * the newly created {@link ShaderObject}.
+     *
+     * @param modId the mod ID which the GLSL file resource belongs to.
+     * @param path  the path to the GLSL resource.
+     * @return this builder instance.
+     */
     default ShaderObjectBuilder location(final String modId, final String path) {
         return location(new ResourceLocation(modId, path));
     }
 
+    /**
+     * Specifies the pre-processor used for processing
+     * the GLSL source of the newly created {@link ShaderObject}.
+     *
+     * @param shaderPreProcessorSupplier a supplier which returns an
+     *                                   instance of {@link ShaderPreProcessor} used for processing the GLSL
+     *                                   source of the newly created {@link ShaderObject}.
+     * @return this builder instance.
+     */
     ShaderObjectBuilder preProcessor(final Supplier<ShaderPreProcessor> shaderPreProcessorSupplier);
 }

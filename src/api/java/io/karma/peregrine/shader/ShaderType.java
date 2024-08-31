@@ -26,6 +26,9 @@ import org.lwjgl.opengl.GL20;
 import java.util.function.BooleanSupplier;
 
 /**
+ * Describes all types of shader objects (modules)
+ * supported by Peregrine.
+ *
  * @author Alexander Hinze
  * @since 29/08/2024
  */
@@ -47,10 +50,22 @@ public enum ShaderType {
         this.isSupported = isSupported;
     }
 
+    /**
+     * Determines whether this shader type
+     * is supported on the current platform.
+     *
+     * @return true if this shader type is supported.
+     */
     public boolean isSupported() {
         return isSupported.getAsBoolean();
     }
 
+    /**
+     * Retrieves the internal OpenGL type
+     * of this shader type.
+     *
+     * @return the internal OpenGL type of this shader type.
+     */
     public int getGLType() {
         return glType;
     }

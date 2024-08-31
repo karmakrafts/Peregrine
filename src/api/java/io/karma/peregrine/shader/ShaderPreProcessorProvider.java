@@ -22,6 +22,9 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import java.util.function.Supplier;
 
 /**
+ * A type alias for a function that supplies a {@link ShaderPreProcessor}.
+ * See {@link Supplier}.
+ *
  * @author Alexander Hinze
  * @since 31/08/2024
  */

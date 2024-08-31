@@ -24,24 +24,76 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import java.nio.file.Path;
 
 /**
+ * Describes a singular shader pipeline stage (or module)
+ * for a given shader program.
+ *
  * @author Alexander Hinze
  * @since 29/08/2024
  */
 @OnlyIn(Dist.CLIENT)
 public interface ShaderObject {
+    /**
+     * Retrieves the location of the GLSL source file
+     * of this shader object.
+     *
+     * @return the location of the GLSL source file of this shader object.
+     */
     ResourceLocation getLocation();
 
+    /**
+     * Retrieves the type of this shader object.
+     *
+     * @return the type of this shader object.
+     */
     ShaderType getType();
 
+    /**
+     * Retrieves the OpenGL ID of this shader object.
+     * Take care when using directly as its easy to mess up state.
+     *
+     * @return the OpenGL ID of this shader object.
+     */
     int getId();
 
+    /**
+     * Determines whether this shader object is compiled.
+     *
+     * @return true if this shader object is compiled.
+     */
     boolean isCompiled();
 
+    /**
+     * Recompiles this shader object.
+     * The shader object may become unusable while it is recompiling.
+     *
+     * @param directory        the cache directory currently being used by the game.
+     * @param program          the shader program this shader object belongs to.
+     * @param resourceProvider the resource provider being used for the current reload.
+     * @return true if the shader program should be linked when all
+     * objects have been recompiled. false if an error occurred while recompiling.
+     */
     boolean recompile(final Path directory, final ShaderProgram program, final ResourceProvider resourceProvider);
 
+    /**
+     * Attach this shader object to the given shader program.
+     *
+     * @param program the shader program to attach this object to.
+     */
     void attach(final ShaderProgram program);
 
+    /**
+     * Detach this shader object from the given shader program.
+     *
+     * @param program the shader program to detach this object from.
+     */
     void detach(final ShaderProgram program);
 
+    /**
+     * Retrieves the pre-processor used for processing
+     * the GLSL source of this shader object.
+     *
+     * @return the pre-processor used for processing
+     * the GLSL source of this shader object.
+     */
     ShaderPreProcessor getPreProcessor();
 }
