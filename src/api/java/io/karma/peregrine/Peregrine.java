@@ -205,10 +205,6 @@ public final class Peregrine {
         isDevelopmentEnvironment = (Boolean) environment.get("is_dev_environment");
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
-            if (shaderBinaryFormat != -1) {
-                LOGGER.info("Using shader binary format 0x{}", Integer.toHexString(shaderBinaryFormat));
-            }
-
             Peregrine.executorService = executorService;
             Peregrine.reloadHandler = reloadHandler;
             Peregrine.dispositionHandler = dispositionHandler;
@@ -221,6 +217,10 @@ public final class Peregrine {
             globalUniforms = di.get(UniformBufferProvider.class);
             defaultShaderPreProcessor = di.get(ShaderPreProcessorProvider.class);
             shaderBinaryFormat = Objects.requireNonNull(di.get(ShaderBinaryFormat.class)).value();
+
+            if (shaderBinaryFormat != -1) {
+                LOGGER.info("Using shader binary format 0x{}", Integer.toHexString(shaderBinaryFormat));
+            }
 
             queryExtensions();
             maxTextureSize = GL11.glGetInteger(GL11.GL_MAX_TEXTURE_SIZE);
