@@ -23,7 +23,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
- * A type alias for a function which maps a {@link Consumer<ShaderProgramBuilder>}
+ * A type alias for a function which maps a {@link Consumer} over a {@link ShaderProgramBuilder}
  * to a {@link ShaderProgram}. See {@link Function}.
  *
  * @author Alexander Hinze

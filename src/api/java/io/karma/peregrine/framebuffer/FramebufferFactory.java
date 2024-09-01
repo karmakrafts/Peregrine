@@ -23,7 +23,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
- * A type alias for a function which maps a {@link Consumer<FramebufferBuilder>} to
+ * A type alias for a function which maps a {@link Consumer} (over a {@link FramebufferBuilder}) to
  * a {@link Framebuffer}. See {@link Function}.
  *
  * @author Alexander Hinze
