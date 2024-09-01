@@ -25,6 +25,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 
 import java.util.EnumMap;
+import java.util.function.Consumer;
 
 /**
  * @author Alexander Hinze
@@ -34,6 +35,8 @@ import java.util.EnumMap;
 public final class DefaultFramebuffer implements Framebuffer {
     private final int id;
     private final EnumMap<AttachmentType, Attachment> attachments;
+    private final Consumer<Framebuffer> bindCallback;
+    private final Consumer<Framebuffer> unbindCallback;
     private int previousDrawId = -1;
     private int previousReadId;
     private int previousTexture;
@@ -42,9 +45,13 @@ public final class DefaultFramebuffer implements Framebuffer {
 
     public DefaultFramebuffer(final int width,
                               final int height,
-                              final EnumMap<AttachmentType, Attachment> attachments) {
+                              final EnumMap<AttachmentType, Attachment> attachments,
+                              final Consumer<Framebuffer> bindCallback,
+                              final Consumer<Framebuffer> unbindCallback) {
         id = GL30.glGenFramebuffers();
         this.attachments = attachments;
+        this.bindCallback = bindCallback;
+        this.unbindCallback = unbindCallback;
         resize(width, height);
         PeregrineMod.DISPOSE_HANDLER.register(this);
     }
@@ -103,6 +110,7 @@ public final class DefaultFramebuffer implements Framebuffer {
         previousTexture = GL11.glGetInteger(GL11.GL_TEXTURE_BINDING_2D);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, id);
+        bindCallback.accept(this);
     }
 
     @Override
@@ -110,6 +118,7 @@ public final class DefaultFramebuffer implements Framebuffer {
         if (previousDrawId == -1) {
             return;
         }
+        unbindCallback.accept(this);
         GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, previousDrawId);
         GL30.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, previousReadId);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, previousTexture);

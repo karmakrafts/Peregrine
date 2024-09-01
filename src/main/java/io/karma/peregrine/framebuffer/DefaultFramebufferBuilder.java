@@ -91,6 +91,6 @@ public final class DefaultFramebufferBuilder implements FramebufferBuilder {
     }
 
     private DefaultFramebuffer build() {
-        return new DefaultFramebuffer(width, height, attachments);
+        return new DefaultFramebuffer(width, height, attachments, bindCallback, unbindCallback);
     }
 }
