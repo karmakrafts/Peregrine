@@ -14,18 +14,22 @@
  *  limitations under the License.
  */
 
-package io.karma.peregrine.font;
+package io.karma.peregrine.framebuffer;
+
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
- * Describes a singular font variation axis in an
- * OpenType or TrueType font (family) along its bounds.
+ * A type alias for a function which maps a {@link Consumer<FramebufferBuilder>} to
+ * a {@link Framebuffer}. See {@link Function}.
  *
- * @param name  the name of the variation axis as specified by the font.
- * @param min   the minimum value of this variation axis.
- * @param max   the maximum value of this variation axis.
- * @param value the value of this variation axis.
  * @author Alexander Hinze
  * @since 31/08/2024
  */
-public record FontVariationAxis(String name, float min, float max, float value) {
+@FunctionalInterface
+@OnlyIn(Dist.CLIENT)
+public interface FramebufferFactory extends Function<Consumer<FramebufferBuilder>, Framebuffer> {
 }

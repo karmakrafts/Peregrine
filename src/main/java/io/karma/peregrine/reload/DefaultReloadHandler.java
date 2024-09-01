@@ -16,9 +16,9 @@
 
 package io.karma.peregrine.reload;
 
-import io.karma.peregrine.util.Dispatcher;
 import io.karma.peregrine.Peregrine;
 import io.karma.peregrine.PeregrineMod;
+import io.karma.peregrine.util.Dispatcher;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;

@@ -20,16 +20,44 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
+ * Represents a single sprite slot for a glyph
+ * in a given font atlas texture.
+ *
  * @author Alexander Hinze
  * @since 31/08/2024
  */
 @OnlyIn(Dist.CLIENT)
 public interface GlyphSprite {
+    /**
+     * Retrieves the metrics of this glyph sprite.
+     *
+     * @return the metrics of this glyph sprite.
+     */
     GlyphMetrics getMetrics();
 
+    /**
+     * The side-size of this glyph sprite in the
+     * font texture atlas in pixels.
+     * Glyph sprites in the atlas are always square.
+     *
+     * @return the side-size of this glyph sprite in
+     * the font texture atlas in pixels.
+     */
     int getSize();
 
+    /**
+     * The U-offset of this sprite in the associated
+     * font atlas texture.
+     *
+     * @return the U-offset of this sprite.
+     */
     float getU();
 
+    /**
+     * The V-offset of this sprite in the associated
+     * font atlas texture.
+     *
+     * @return the V-offset of this sprite.
+     */
     float getV();
 }

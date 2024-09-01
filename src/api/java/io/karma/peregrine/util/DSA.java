@@ -72,4 +72,14 @@ public final class DSA {
         closure.accept((n, v) -> GL11.glTexParameteri(GL11.GL_TEXTURE_2D, n, v));
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
     }
+
+    public static int getTexParameteri(final int texture, final int param) {
+        if (GL.getCapabilities().GL_ARB_direct_state_access) {
+            return ARBDirectStateAccess.glGetTextureParameteri(texture, param);
+        }
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
+        final var result = GL11.glGetTexParameteri(GL11.GL_TEXTURE_2D, param);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+        return result;
+    }
 }

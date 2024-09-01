@@ -23,6 +23,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.loading.FMLLoader;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL33;
 
@@ -65,12 +66,34 @@ public final class TextureUtils {
     }
 
     public static int createDefaultTexture() {
+        return createTexture(TextureFilter.NEAREST,
+            TextureFilter.NEAREST,
+            TextureWrapMode.CLAMP,
+            TextureWrapMode.CLAMP);
+    }
+
+    public static int guessStorageType(final int format) {
+        return switch (format) {
+            case GL30.GL_RGBA8, GL30.GL_RGBA8I, GL30.GL_RGBA8UI, GL30.GL_RGB8, GL30.GL_RGB ->
+                GL12.GL_UNSIGNED_INT_8_8_8_8;
+            case GL30.GL_BGRA, GL30.GL_BGRA_INTEGER -> GL12.GL_UNSIGNED_INT_8_8_8_8_REV;
+            case GL30.GL_RGBA32F -> GL11.GL_FLOAT;
+            case GL30.GL_R8, GL30.GL_R -> GL11.GL_UNSIGNED_BYTE;
+            case GL30.GL_RG8, GL30.GL_RG -> GL11.GL_UNSIGNED_SHORT;
+            default -> 0;
+        };
+    }
+
+    public static int createTexture(final TextureFilter minFilter,
+                                    final TextureFilter magFilter,
+                                    final TextureWrapMode horizontalWrapMode,
+                                    final TextureWrapMode verticalWrapMode) {
         final var id = DSA.createTexture();
         DSA.texParameteri(id, setter -> {
-            setter.accept(GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
-            setter.accept(GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
-            setter.accept(GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
-            setter.accept(GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
+            setter.accept(GL11.GL_TEXTURE_MIN_FILTER, minFilter.getGLType());
+            setter.accept(GL11.GL_TEXTURE_MAG_FILTER, magFilter.getGLType());
+            setter.accept(GL11.GL_TEXTURE_WRAP_S, horizontalWrapMode.getGLType());
+            setter.accept(GL11.GL_TEXTURE_WRAP_T, verticalWrapMode.getGLType());
         });
         return id;
     }

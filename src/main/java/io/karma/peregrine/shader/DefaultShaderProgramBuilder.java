@@ -164,7 +164,7 @@ public class DefaultShaderProgramBuilder implements ShaderProgramBuilder {
 
     @Override
     public ShaderProgramBuilder sampler(final String name, final ResourceLocation location) {
-        return sampler(name, Texture.create(location)::getId);
+        return sampler(name, Texture.get(location)::getId);
     }
 
     @Override

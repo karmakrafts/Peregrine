@@ -31,15 +31,52 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public interface TextureFactories {
     /**
+     * Creates a new empty texture object with the given properties.
+     *
+     * @param minFilter          the minifying texture filter applied to the texture.
+     * @param magFilter          the magnifying texture filter applied to the texture.
+     * @param horizontalWrapMode the type of wrapping applied to the texture
+     *                           horizontally when it is sampled beyond its bounds.
+     * @param verticalWrapMode   the type of wrapping applied to the texture
+     *                           vertically when it is sampled beyond its bounds.
+     * @return a new empty texture object with the given properties.
+     */
+    DynamicTexture create(final TextureFilter minFilter,
+                          final TextureFilter magFilter,
+                          final TextureWrapMode horizontalWrapMode,
+                          final TextureWrapMode verticalWrapMode);
+
+    /**
      * Retrieves a static texture object which contains
      * the image data of the given texture resource.
      * Creates a new static texture if none has been
      * created for the given resource location.
      *
-     * @param location the location of the image resource to load
-     *                 into the newly created texture object.
+     * @param location           the location of the image resource to load
+     *                           into the newly created texture object.
+     * @param minFilter          the minifying texture filter applied to the texture.
+     * @param magFilter          the magnifying texture filter applied to the texture.
+     * @param horizontalWrapMode the type of wrapping applied to the texture
+     *                           horizontally when it is sampled beyond its bounds.
+     * @param verticalWrapMode   the type of wrapping applied to the texture
+     *                           vertically when it is sampled beyond its bounds.
      * @return a new texture object which contains the image data
      * of the given texture resource.
      */
-    Texture get(final ResourceLocation location);
+    Texture get(final ResourceLocation location,
+                final TextureFilter minFilter,
+                final TextureFilter magFilter,
+                final TextureWrapMode horizontalWrapMode,
+                final TextureWrapMode verticalWrapMode);
+
+    /**
+     * Retrieves a proxy texture object for the given
+     * OpenGL texture ID.
+     *
+     * @param textureId the OpenGL texture ID to create a
+     *                  new texture object for.
+     * @return a new texture object proxy that references
+     * the given OpenGL texture.
+     */
+    Texture get(final int textureId);
 }

@@ -22,12 +22,12 @@ import io.karma.peregrine.buffer.UniformBufferProvider;
 import io.karma.peregrine.dispose.DispositionHandler;
 import io.karma.peregrine.font.FontFamily;
 import io.karma.peregrine.font.FontFamilyFactory;
+import io.karma.peregrine.framebuffer.FramebufferFactory;
 import io.karma.peregrine.reload.ReloadHandler;
 import io.karma.peregrine.shader.*;
 import io.karma.peregrine.texture.TextureFactories;
 import io.karma.peregrine.uniform.UniformTypeFactories;
 import io.karma.peregrine.util.DI;
-import io.karma.peregrine.shader.ShaderBinaryFormat;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -38,6 +38,7 @@ import net.minecraftforge.registries.RegistryManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLCapabilities;
 
 import java.util.Map;
@@ -68,6 +69,8 @@ public final class Peregrine {
     @OnlyIn(Dist.CLIENT)
     private static ShaderProgramFactory shaderProgramFactory;
     @OnlyIn(Dist.CLIENT)
+    private static FramebufferFactory framebufferFactory;
+    @OnlyIn(Dist.CLIENT)
     private static ShaderLoaderProvider defaultShaderLoader;
     @OnlyIn(Dist.CLIENT)
     private static UniformBufferProvider globalUniforms;
@@ -92,6 +95,8 @@ public final class Peregrine {
     private static boolean supportsDirectStateAccess;
     @OnlyIn(Dist.CLIENT)
     private static int shaderBinaryFormat;
+    @OnlyIn(Dist.CLIENT)
+    private static int maxTextureSize;
 
     @OnlyIn(Dist.CLIENT)
     private static boolean isSodiumInstalled;
@@ -183,12 +188,15 @@ public final class Peregrine {
             uniformTypeFactories = di.get(UniformTypeFactories.class);
             uniformBufferFactory = di.get(UniformBufferFactory.class);
             shaderProgramFactory = di.get(ShaderProgramFactory.class);
+            framebufferFactory = di.get(FramebufferFactory.class);
             defaultShaderLoader = di.get(ShaderLoaderProvider.class);
             globalUniforms = di.get(UniformBufferProvider.class);
             defaultShaderPreProcessor = di.get(ShaderPreProcessorProvider.class);
             shaderBinaryFormat = Objects.requireNonNull(di.get(ShaderBinaryFormat.class)).value();
 
             queryExtensions();
+            maxTextureSize = GL11.glGetInteger(GL11.GL_MAX_TEXTURE_SIZE);
+            LOGGER.info("Max texture size is {}x{} pixels", maxTextureSize, maxTextureSize);
 
             isSodiumInstalled = (Boolean) environment.get("is_sodium_installed");
             isIrisInstalled = (Boolean) environment.get("is_iris_installed");
@@ -266,6 +274,12 @@ public final class Peregrine {
     }
 
     @OnlyIn(Dist.CLIENT)
+    public static FramebufferFactory getFramebufferFactory() {
+        ensureInitialized();
+        return framebufferFactory;
+    }
+
+    @OnlyIn(Dist.CLIENT)
     public static boolean supportsBindlessTextures() {
         ensureInitialized();
         return supportsBindlessTextures;
@@ -317,6 +331,12 @@ public final class Peregrine {
     public static int getShaderBinaryFormat() {
         ensureInitialized();
         return shaderBinaryFormat;
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public static int getMaxTextureSize() {
+        ensureInitialized();
+        return maxTextureSize;
     }
 
     @OnlyIn(Dist.CLIENT)

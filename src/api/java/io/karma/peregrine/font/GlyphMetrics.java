@@ -20,24 +20,75 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
+ * Describes the dimensions and parameters of a single glyph.
+ * See <a href="https://freetype.org/freetype2/docs/glyphs/glyphs-3.html" target="_blank">the examples in the FreeType documentation</a>.
+ *
  * @author Alexander Hinze
  * @since 31/08/2024
  */
 @OnlyIn(Dist.CLIENT)
 public interface GlyphMetrics {
+    /**
+     * Retrieves the width of the associated glyph in partial pixels.
+     *
+     * @return the width of the associated glyph in partial pixels.
+     */
     float getWidth();
 
+    /**
+     * Retrieves the height of the associated glyph in partial pixels.
+     *
+     * @return the height of the associated glyph in partial pixels.
+     */
     float getHeight();
 
+    /**
+     * Retrieves the ascent of the associated glyph in partial pixels.
+     *
+     * @return the ascent of the associated glyph in partial pixels.
+     */
     float getAscent();
 
+    /**
+     * Retrieves the descent of the associated glyph in partial pixels.
+     *
+     * @return the descent of the associated glyph in partial pixels.
+     */
     float getDescent();
 
+    /**
+     * Retrieves the amount of partial pixels which the current y-position
+     * needs to be incremented after rendering the associated glyph.
+     *
+     * @return the amount of partial pixels to increment after
+     * rendering the associated glyph.
+     */
     float getAdvanceX();
 
+    /**
+     * Retrieves the amount of partial pixels which the current x-position
+     * needs to be incremented after rendering the associated glyph.
+     *
+     * @return the amount of partial pixels to increment after
+     * rendering the associated glyph.
+     */
     float getAdvanceY();
 
+    /**
+     * Retrieves the amount of partial pixels from the current pen position
+     * to the left bbox edge of the next glyph.
+     *
+     * @return the amount of partial pixels from the current pen position
+     * to the left bbox edge of the next glyph.
+     */
     float getBearingX();
 
+    /**
+     * Retrieves the amount of partial pixels from the current pen position
+     * to the upper bbox edge of the next glyph.
+     *
+     * @return the amount of partial pixels from the current pen position
+     * to the upper bbox edge of the next glyph.
+     */
     float getBearingY();
 }

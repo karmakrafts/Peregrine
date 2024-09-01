@@ -16,11 +16,11 @@
 
 package io.karma.peregrine.texture;
 
+import io.karma.peregrine.util.HashUtils;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-
-import java.util.HashMap;
 
 /**
  * @author Alexander Hinze
@@ -28,10 +28,33 @@ import java.util.HashMap;
  */
 @OnlyIn(Dist.CLIENT)
 public final class DefaultTextureFactories implements TextureFactories {
-    private final HashMap<ResourceLocation, StaticTexture> staticTextures = new HashMap<>();
+    private final Int2ObjectOpenHashMap<DefaultTexture> staticTextures = new Int2ObjectOpenHashMap<>();
+    private final Int2ObjectOpenHashMap<ProxyTexture> proxyTextures = new Int2ObjectOpenHashMap<>();
 
     @Override
-    public Texture get(final ResourceLocation location) {
-        return staticTextures.computeIfAbsent(location, StaticTexture::new);
+    public DynamicTexture create(final TextureFilter minFilter,
+                                 final TextureFilter magFilter,
+                                 final TextureWrapMode horizontalWrapMode,
+                                 final TextureWrapMode verticalWrapMode) {
+        return new DefaultDynamicTexture(minFilter, magFilter, horizontalWrapMode, verticalWrapMode);
+    }
+
+    @Override
+    public Texture get(final ResourceLocation location,
+                       final TextureFilter minFilter,
+                       final TextureFilter magFilter,
+                       final TextureWrapMode horizontalWrapMode,
+                       final TextureWrapMode verticalWrapMode) {
+        return staticTextures.computeIfAbsent(HashUtils.combine(location.hashCode(),
+                minFilter.ordinal(),
+                magFilter.ordinal(),
+                horizontalWrapMode.ordinal(),
+                verticalWrapMode.ordinal()),
+            hash -> new DefaultTexture(location, minFilter, magFilter, horizontalWrapMode, verticalWrapMode));
+    }
+
+    @Override
+    public Texture get(final int textureId) {
+        return proxyTextures.computeIfAbsent(textureId, ProxyTexture::new);
     }
 }

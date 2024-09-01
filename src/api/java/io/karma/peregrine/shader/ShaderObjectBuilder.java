@@ -20,11 +20,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
  * Describes a builder pattern for creating
  * new immutable shader objects.
+ * See {@link ShaderProgramBuilder#shader(Consumer)}.
  *
  * @author Alexander Hinze
  * @since 30/08/2024

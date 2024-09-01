@@ -38,13 +38,6 @@ import java.nio.file.Path;
  */
 @OnlyIn(Dist.CLIENT)
 public final class BinaryShaderLoader extends AbstractShaderLoader {
-    @Override
-    public void prepareProgram(final ShaderProgram program) {
-        ARBGetProgramBinary.glProgramParameteri(program.getId(),
-            ARBGetProgramBinary.GL_PROGRAM_BINARY_RETRIEVABLE_HINT,
-            GL11.GL_TRUE);
-    }
-
     private static int getProgramSourceHash(final ResourceProvider resourceProvider, final ShaderProgram program) {
         var hash = 0;
         for (final var object : program.getObjects()) {
@@ -52,6 +45,13 @@ public final class BinaryShaderLoader extends AbstractShaderLoader {
             hash = HashUtils.combine(source.hashCode(), hash);
         }
         return hash;
+    }
+
+    @Override
+    public void prepareProgram(final ShaderProgram program) {
+        ARBGetProgramBinary.glProgramParameteri(program.getId(),
+            ARBGetProgramBinary.GL_PROGRAM_BINARY_RETRIEVABLE_HINT,
+            GL11.GL_TRUE);
     }
 
     @Override

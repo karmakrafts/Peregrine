@@ -14,18 +14,22 @@
  *  limitations under the License.
  */
 
-package io.karma.peregrine.font;
+package io.karma.peregrine.texture;
+
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
- * Describes a singular font variation axis in an
- * OpenType or TrueType font (family) along its bounds.
- *
- * @param name  the name of the variation axis as specified by the font.
- * @param min   the minimum value of this variation axis.
- * @param max   the maximum value of this variation axis.
- * @param value the value of this variation axis.
  * @author Alexander Hinze
  * @since 31/08/2024
  */
-public record FontVariationAxis(String name, float min, float max, float value) {
+@OnlyIn(Dist.CLIENT)
+public interface TextureFormat {
+    int getGLType();
+
+    int getInternalGLType();
+
+    int getGLDataType();
+
+    TextureType getType();
 }

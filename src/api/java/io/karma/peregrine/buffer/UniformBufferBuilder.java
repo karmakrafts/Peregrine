@@ -22,10 +22,12 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * Describes a builder pattern for creating new
  * immutable uniform buffer objects.
+ * See {@link UniformBuffer#create(Consumer)}.
  *
  * @author Alexander Hinze
  * @since 30/08/2024

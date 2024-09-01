@@ -25,13 +25,14 @@ import io.karma.peregrine.buffer.UniformBufferProvider;
 import io.karma.peregrine.dispose.DefaultDispositionHandler;
 import io.karma.peregrine.font.DefaultFontFamily;
 import io.karma.peregrine.font.FontFamilyFactory;
+import io.karma.peregrine.framebuffer.DefaultFramebufferBuilder;
+import io.karma.peregrine.framebuffer.FramebufferFactory;
 import io.karma.peregrine.reload.DefaultReloadHandler;
 import io.karma.peregrine.shader.*;
 import io.karma.peregrine.texture.DefaultTextureFactories;
 import io.karma.peregrine.texture.TextureFactories;
 import io.karma.peregrine.uniform.*;
 import io.karma.peregrine.util.DI;
-import io.karma.peregrine.shader.ShaderBinaryFormat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraftforge.api.distmarker.Dist;
@@ -66,15 +67,12 @@ import java.util.concurrent.TimeUnit;
  */
 @Mod(Peregrine.MODID)
 public final class PeregrineMod {
-    private static PeregrineMod instance;
-
     @Internal
     public static final DefaultReloadHandler RELOAD_HANDLER = new DefaultReloadHandler();
     @Internal
     public static final DefaultDispositionHandler DISPOSE_HANDLER = new DefaultDispositionHandler();
     @Internal
     public static final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool();
-
     @OnlyIn(Dist.CLIENT)
     @Internal
     public static final DefaultUniformTypeFactories UNIFORM_TYPE_FACTORIES = new DefaultUniformTypeFactories();
@@ -84,16 +82,15 @@ public final class PeregrineMod {
     @OnlyIn(Dist.CLIENT)
     @Internal
     public static final DefaultShaderPreProcessor SHADER_PRE_PROCESSOR = new DefaultShaderPreProcessor();
-
     @OnlyIn(Dist.CLIENT)
     @Internal
     public static final Lazy<ShaderLoader> SHADER_LOADER = Lazy.of(() -> {
-        if(Peregrine.supportsBinaryShaderCaching()) {
+        if (Peregrine.supportsBinaryShaderCaching()) {
             return new BinaryShaderLoader();
         }
         return new DefaultShaderLoader();
     });
-
+    private static PeregrineMod instance;
     // @formatter:off
     @OnlyIn(Dist.CLIENT)
     private static final Lazy<UniformBuffer> GLOBAL_UNIFORMS = Lazy.of(() -> DefaultUniformBufferBuilder.build(it -> it
@@ -163,6 +160,7 @@ public final class PeregrineMod {
                 di.put(UniformTypeFactories.class, UNIFORM_TYPE_FACTORIES);
                 di.put(UniformBufferFactory.class, DefaultUniformBufferBuilder::build);
                 di.put(ShaderProgramFactory.class, DefaultShaderProgramBuilder::build);
+                di.put(FramebufferFactory.class, DefaultFramebufferBuilder::build);
                 di.put(ShaderLoaderProvider.class, SHADER_LOADER::get);
                 di.put(UniformBufferProvider.class, GLOBAL_UNIFORMS::get);
                 di.put(ShaderPreProcessorProvider.class, () -> SHADER_PRE_PROCESSOR);
@@ -172,10 +170,6 @@ public final class PeregrineMod {
             di.put(Environment.class, new Environment(environment));
             Peregrine.init(EXECUTOR_SERVICE, RELOAD_HANDLER, DISPOSE_HANDLER, di);
         });
-    }
-
-    public float getPartialTicks() {
-        return partialTicks;
     }
 
     public static PeregrineMod getInstance() {
@@ -217,6 +211,10 @@ public final class PeregrineMod {
         else {
             return -1;
         }
+    }
+
+    public float getPartialTicks() {
+        return partialTicks;
     }
 
     @OnlyIn(Dist.CLIENT)

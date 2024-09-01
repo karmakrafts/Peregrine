@@ -30,6 +30,7 @@ import java.util.function.Supplier;
 /**
  * Describes a builder pattern for creating new
  * immutable shader programs.
+ * See {@link ShaderProgram#create(Consumer)}.
  *
  * @author Alexander Hinze
  * @since 30/08/2024
