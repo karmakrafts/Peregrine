@@ -21,7 +21,9 @@ import io.karma.peregrine.util.Dispatcher;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
@@ -30,11 +32,15 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 @OnlyIn(Dist.CLIENT)
 public final class DefaultDispositionHandler implements DispositionHandler {
-    private final ConcurrentLinkedQueue<Disposable> objects = new ConcurrentLinkedQueue<>();
+    private final ConcurrentLinkedQueue<WeakReference<Disposable>> objects = new ConcurrentLinkedQueue<>();
 
     @Override
     public void disposeAll() {
-        for (final var object : objects) {
+        for (final var ref : objects) {
+            final var object = ref.get();
+            if (object == null) {
+                continue; // Object was garbage collected, skip
+            }
             if (object.getDisposeDispatcher() == Dispatcher.BACKGROUND) {
                 PeregrineMod.EXECUTOR_SERVICE.submit(object::dispose);
                 continue;
@@ -46,19 +52,24 @@ public final class DefaultDispositionHandler implements DispositionHandler {
 
     @Override
     public void register(final Disposable disposable) {
-        if (objects.contains(disposable)) {
+        if (objects.stream().anyMatch(ref -> ref.get() == disposable)) {
             return;
         }
-        objects.add(disposable);
+        objects.add(new WeakReference<>(disposable));
     }
 
     @Override
     public void unregister(final Disposable disposable) {
-        objects.remove(disposable);
+        objects.removeIf(ref -> ref.get() == disposable);
     }
 
     @Override
     public List<Disposable> getObjects() {
-        return List.copyOf(objects);
+        // @formatter:off
+        return objects.stream()
+            .map(WeakReference::get)
+            .filter(Objects::nonNull)
+            .toList();
+        // @formatter:on
     }
 }

@@ -41,6 +41,8 @@ import java.util.function.Consumer;
  */
 @OnlyIn(Dist.CLIENT)
 public interface ShaderProgram extends Disposable, Reloadable {
+    int INVALID_ID = -1;
+
     /**
      * Creates a new shader program with the given properties.
      *

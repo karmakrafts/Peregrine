@@ -54,7 +54,6 @@ import java.util.function.Supplier;
  */
 @OnlyIn(Dist.CLIENT)
 public final class DefaultShaderProgram extends ShaderStateShard implements ShaderProgram, Reloadable {
-    private final int id;
     private final VertexFormat vertexFormat;
     private final ArrayList<ShaderObject> objects;
     private final Consumer<ShaderProgram> bindCallback;
@@ -68,10 +67,9 @@ public final class DefaultShaderProgram extends ShaderStateShard implements Shad
     private final LinkedHashMap<String, Object> constants;
     private final LinkedHashMap<String, Object> defines;
     private final Supplier<ShaderLoader> cacheSupplier;
-
     private final ArrayList<Sampler> dynamicSamplers = new ArrayList<>();
     private final PeregrineShaderAdaptor extendedShaderAdaptor = new PeregrineShaderAdaptor(this);
-
+    private int id;
     private boolean isLinked;
     private boolean isRelinkRequested;
     private boolean isBound;
@@ -337,6 +335,9 @@ public final class DefaultShaderProgram extends ShaderStateShard implements Shad
 
     @Override
     public void dispose() {
+        if (id == INVALID_ID) {
+            return;
+        }
         isLinked = false;
         // Detach and free all shader objects
         for (final var object : objects) {
@@ -347,6 +348,7 @@ public final class DefaultShaderProgram extends ShaderStateShard implements Shad
             GL20.glDeleteShader(objectId);
         }
         GL20.glDeleteProgram(id);
+        id = INVALID_ID;
     }
 
     @Override

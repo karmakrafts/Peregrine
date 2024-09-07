@@ -14,25 +14,12 @@
  *  limitations under the License.
  */
 
-package io.karma.peregrine.shader;
-
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+package io.karma.peregrine.color;
 
 /**
- * Represents a binary shader format supported
- * by the current OpenGL implementation.
- * This wrapper type is used in the initialization {@link io.karma.peregrine.util.DI}.
- *
  * @author Alexander Hinze
- * @since 30/08/2024
+ * @since 07/09/2024
  */
-@OnlyIn(Dist.CLIENT)
-public record ShaderBinaryFormat(int value) {
-    private static final int INVALID_VALUE = -1;
-    public static final ShaderBinaryFormat NONE = new ShaderBinaryFormat(INVALID_VALUE);
-
-    public boolean isValid() {
-        return value != INVALID_VALUE;
-    }
+public enum ColorChannel {
+    R, G, B, A
 }

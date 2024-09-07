@@ -16,6 +16,7 @@
 
 package io.karma.peregrine.framebuffer;
 
+import com.google.common.base.Preconditions;
 import io.karma.peregrine.texture.TextureFilter;
 import io.karma.peregrine.texture.TextureFormat;
 import io.karma.peregrine.texture.TextureWrapMode;
@@ -43,6 +44,7 @@ public final class DefaultAttachmentBuilder implements AttachmentBuilder {
     }
 
     public DefaultAttachment build() {
+        Preconditions.checkArgument(format != null, "Texture format must be specified");
         return new DefaultAttachment(width,
             height,
             type,

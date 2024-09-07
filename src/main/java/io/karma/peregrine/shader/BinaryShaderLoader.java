@@ -82,7 +82,7 @@ public final class BinaryShaderLoader extends AbstractShaderLoader {
             try (final var stack = MemoryStack.stackPush()) {
                 final var format = stack.mallocInt(1);
                 ARBGetProgramBinary.glGetProgramBinary(id, null, format, data);
-                if (format.get() != Peregrine.getShaderBinaryFormat()) {
+                if (format.get() != Peregrine.getShaderBinaryFormat().value()) {
                     Peregrine.LOGGER.warn("Mismatching shader program binary format");
                 }
             }
@@ -118,7 +118,9 @@ public final class BinaryShaderLoader extends AbstractShaderLoader {
                     final var data = MemoryUtil.memAlloc(size);
                     channel.read(data);
                     data.flip();
-                    ARBGetProgramBinary.glProgramBinary(program.getId(), Peregrine.getShaderBinaryFormat(), data);
+                    ARBGetProgramBinary.glProgramBinary(program.getId(),
+                        Peregrine.getShaderBinaryFormat().value(),
+                        data);
                     MemoryUtil.memFree(data);
                     Peregrine.LOGGER.debug("Shader binary cache hit for program {}", program);
                     return true;

@@ -16,6 +16,7 @@
 
 package io.karma.peregrine.framebuffer;
 
+import com.google.common.base.Preconditions;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -44,21 +45,22 @@ public final class DefaultFramebufferBuilder implements FramebufferBuilder {
 
     @Override
     public FramebufferBuilder width(final int width) {
+        Preconditions.checkArgument(width > 0, "Width must be greater than 0");
         this.width = width;
         return this;
     }
 
     @Override
     public FramebufferBuilder height(final int height) {
+        Preconditions.checkArgument(height > 0, "Height must be greater than 0");
         this.height = height;
         return this;
     }
 
     @Override
     public FramebufferBuilder attachment(final Consumer<AttachmentBuilder> callback) {
-        if (width == 0 || height == 0) {
-            throw new IllegalArgumentException("Width or height of attachment cannot be 0");
-        }
+        Preconditions.checkArgument(width > 0, "Width must be greater than 0");
+        Preconditions.checkArgument(height > 0, "Height must be greater than 0");
         final var builder = new DefaultAttachmentBuilder(width, height);
         callback.accept(builder);
         final var attachment = builder.build();

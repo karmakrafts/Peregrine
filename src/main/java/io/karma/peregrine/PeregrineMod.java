@@ -29,6 +29,12 @@ import io.karma.peregrine.framebuffer.DefaultFramebufferBuilder;
 import io.karma.peregrine.framebuffer.FramebufferFactory;
 import io.karma.peregrine.reload.DefaultReloadHandler;
 import io.karma.peregrine.shader.*;
+import io.karma.peregrine.state.BlendModeFactory;
+import io.karma.peregrine.state.DefaultBlendModeBuilder;
+import io.karma.peregrine.state.DefaultRenderTypeBuilder;
+import io.karma.peregrine.state.RenderTypeFactory;
+import io.karma.peregrine.target.DefaultRenderTargetFactories;
+import io.karma.peregrine.target.RenderTargetFactories;
 import io.karma.peregrine.texture.DefaultTextureFactories;
 import io.karma.peregrine.texture.TextureFactories;
 import io.karma.peregrine.uniform.*;
@@ -90,6 +96,10 @@ public final class PeregrineMod {
         }
         return new DefaultShaderLoader();
     });
+    @OnlyIn(Dist.CLIENT)
+    @Internal
+    public static final DefaultRenderTargetFactories RENDER_TARGET_FACTORIES = new DefaultRenderTargetFactories();
+
     private static PeregrineMod instance;
     // @formatter:off
     @OnlyIn(Dist.CLIENT)
@@ -133,43 +143,38 @@ public final class PeregrineMod {
         final var forgeBus = MinecraftForge.EVENT_BUS;
         forgeBus.addListener(this::onGameShutdown);
 
+        final var di = new DI();
+        final var environment = new HashMap<String, Object>();
+        environment.put("is_dev_environment", isDevEnvironment);
+
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             final var modList = FMLLoader.getLoadingModList();
-            isSodiumInstalled = modList.getModFileById("sodium") != null;
-            if (!isSodiumInstalled) {
-                isSodiumInstalled = modList.getModFileById("embeddium") != null;
-            }
-            isIrisInstalled = modList.getModFileById("iris") != null;
-            if (!isIrisInstalled) {
-                isIrisInstalled = modList.getModFileById("oculus") != null;
-            }
+            isSodiumInstalled = modList.getModFileById("sodium") != null || modList.getModFileById("embeddium") != null;
+            isIrisInstalled = modList.getModFileById("iris") != null || modList.getModFileById("oculus") != null;
             forgeBus.addListener(this::onClientTick);
             forgeBus.addListener(this::onRenderTick);
             ((ReloadableResourceManager) Minecraft.getInstance().getResourceManager()).registerReloadListener(
                 RELOAD_HANDLER);
+
+            environment.put("is_sodium_installed", isSodiumInstalled);
+            environment.put("is_iris_installed", isIrisInstalled);
+            di.put(TextureFactories.class, TEXTURE_FACTORIES);
+            di.put(UniformTypeFactories.class, UNIFORM_TYPE_FACTORIES);
+            di.put(UniformBufferFactory.class, DefaultUniformBufferBuilder::build);
+            di.put(ShaderProgramFactory.class, DefaultShaderProgramBuilder::build);
+            di.put(FramebufferFactory.class, DefaultFramebufferBuilder::build);
+            di.put(RenderTypeFactory.class, DefaultRenderTypeBuilder::build);
+            di.put(BlendModeFactory.class, DefaultBlendModeBuilder::build);
+            di.put(ShaderLoaderProvider.class, SHADER_LOADER::get);
+            di.put(UniformBufferProvider.class, GLOBAL_UNIFORMS::get);
+            di.put(ShaderPreProcessorProvider.class, () -> SHADER_PRE_PROCESSOR);
+            di.put(RenderTargetFactories.class, RENDER_TARGET_FACTORIES);
+            di.put(ShaderBinaryFormat.class, detectShaderBinaryFormat());
         });
 
-        Minecraft.getInstance().execute(() -> {
-            final var di = new DI();
-            final var environment = new HashMap<String, Object>();
-            environment.put("is_dev_environment", isDevEnvironment);
-            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
-                environment.put("is_sodium_installed", isSodiumInstalled);
-                environment.put("is_iris_installed", isIrisInstalled);
-                di.put(TextureFactories.class, TEXTURE_FACTORIES);
-                di.put(UniformTypeFactories.class, UNIFORM_TYPE_FACTORIES);
-                di.put(UniformBufferFactory.class, DefaultUniformBufferBuilder::build);
-                di.put(ShaderProgramFactory.class, DefaultShaderProgramBuilder::build);
-                di.put(FramebufferFactory.class, DefaultFramebufferBuilder::build);
-                di.put(ShaderLoaderProvider.class, SHADER_LOADER::get);
-                di.put(UniformBufferProvider.class, GLOBAL_UNIFORMS::get);
-                di.put(ShaderPreProcessorProvider.class, () -> SHADER_PRE_PROCESSOR);
-                di.put(ShaderBinaryFormat.class, new ShaderBinaryFormat(detectShaderBinaryFormat()));
-            });
-            di.put(FontFamilyFactory.class, DefaultFontFamily::new);
-            di.put(Environment.class, new Environment(environment));
-            Peregrine.init(EXECUTOR_SERVICE, RELOAD_HANDLER, DISPOSE_HANDLER, di);
-        });
+        di.put(FontFamilyFactory.class, DefaultFontFamily::new);
+        di.put(Environment.class, new Environment(environment));
+        Peregrine.init(EXECUTOR_SERVICE, RELOAD_HANDLER, DISPOSE_HANDLER, di);
     }
 
     public static PeregrineMod getInstance() {
@@ -196,20 +201,20 @@ public final class PeregrineMod {
     }
 
     @OnlyIn(Dist.CLIENT)
-    private static int detectShaderBinaryFormat() {
+    private static ShaderBinaryFormat detectShaderBinaryFormat() {
         if (GL.getCapabilities().GL_ARB_get_program_binary) {
             try (final var stack = MemoryStack.stackPush()) {
                 final var formatCount = GL11.glGetInteger(ARBGetProgramBinary.GL_NUM_PROGRAM_BINARY_FORMATS);
                 if (formatCount == 0) {
-                    return -1;
+                    return ShaderBinaryFormat.NONE;
                 }
                 final var formats = stack.mallocInt(formatCount);
                 GL11.glGetIntegerv(ARBGetProgramBinary.GL_PROGRAM_BINARY_FORMATS, formats);
-                return formats.get(0);
+                return new ShaderBinaryFormat(formats.get(0));
             }
         }
         else {
-            return -1;
+            return ShaderBinaryFormat.NONE;
         }
     }
 

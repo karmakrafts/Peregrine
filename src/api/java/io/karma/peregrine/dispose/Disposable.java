@@ -35,7 +35,7 @@ public interface Disposable {
      * the associated disposable object to be reordered
      * in the disposition queue.
      */
-    int DEFAULT_PRIORITY = 0;
+    int DEFAULT_DISPOSE_PRIORITY = 0;
 
     /**
      * A default comparator function which compares
@@ -53,7 +53,7 @@ public interface Disposable {
     default int getDisposePriority() {
         final var clazz = getClass();
         if (!clazz.isAnnotationPresent(DisposePriority.class)) {
-            return DEFAULT_PRIORITY;
+            return DEFAULT_DISPOSE_PRIORITY;
         }
         return clazz.getAnnotation(DisposePriority.class).value();
     }

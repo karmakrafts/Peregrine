@@ -14,25 +14,39 @@
  *  limitations under the License.
  */
 
-package io.karma.peregrine.shader;
+package io.karma.peregrine.state;
 
+import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
+import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
+import io.karma.peregrine.Peregrine;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import java.util.function.Consumer;
+
 /**
- * Represents a binary shader format supported
- * by the current OpenGL implementation.
- * This wrapper type is used in the initialization {@link io.karma.peregrine.util.DI}.
- *
  * @author Alexander Hinze
- * @since 30/08/2024
+ * @since 07/09/2024
  */
 @OnlyIn(Dist.CLIENT)
-public record ShaderBinaryFormat(int value) {
-    private static final int INVALID_VALUE = -1;
-    public static final ShaderBinaryFormat NONE = new ShaderBinaryFormat(INVALID_VALUE);
+public interface BlendMode {
+    static BlendMode create(final Consumer<BlendModeBuilder> callback) {
+        return Peregrine.getBlendModeFactory().apply(callback);
+    }
 
-    public boolean isValid() {
-        return value != INVALID_VALUE;
+    SourceFactor getSourceFactor();
+
+    DestFactor getDestFactor();
+
+    default SourceFactor getColorSourceFactor() {
+        return getSourceFactor();
+    }
+
+    default DestFactor getColorDestFactor() {
+        return getDestFactor();
+    }
+
+    default boolean usesBlending() {
+        return true;
     }
 }

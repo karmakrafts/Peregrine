@@ -18,6 +18,7 @@ package io.karma.peregrine.framebuffer;
 
 import io.karma.peregrine.Peregrine;
 import io.karma.peregrine.PeregrineMod;
+import net.minecraft.client.renderer.RenderStateShard.OutputStateShard;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.Nullable;
@@ -33,12 +34,13 @@ import java.util.function.Consumer;
  */
 @OnlyIn(Dist.CLIENT)
 public final class DefaultFramebuffer implements Framebuffer {
-    private final int id;
     private final EnumMap<AttachmentType, Attachment> attachments;
     private final Consumer<Framebuffer> bindCallback;
     private final Consumer<Framebuffer> unbindCallback;
-    private int previousDrawId = -1;
-    private int previousReadId;
+    private final OutputStateShard outputState;
+    private int id;
+    private int previousDrawId = INVALID_ID;
+    private int previousReadId = INVALID_ID;
     private int previousTexture;
     private int width;
     private int height;
@@ -53,7 +55,13 @@ public final class DefaultFramebuffer implements Framebuffer {
         this.bindCallback = bindCallback;
         this.unbindCallback = unbindCallback;
         resize(width, height);
+        outputState = new OutputStateShard(toString(), this::bind, this::unbind);
         PeregrineMod.DISPOSE_HANDLER.register(this);
+    }
+
+    @Override
+    public OutputStateShard asStateShard() {
+        return outputState;
     }
 
     @Override
@@ -63,10 +71,14 @@ public final class DefaultFramebuffer implements Framebuffer {
 
     @Override
     public void dispose() {
+        if (id == INVALID_ID) {
+            return;
+        }
         for (final var attachment : attachments.values()) {
             attachment.dispose();
         }
         GL30.glDeleteFramebuffers(id);
+        id = INVALID_ID;
     }
 
     @Override
@@ -102,7 +114,7 @@ public final class DefaultFramebuffer implements Framebuffer {
 
     @Override
     public void bind() {
-        if (previousDrawId != -1) {
+        if (previousDrawId != INVALID_ID) {
             return;
         }
         previousDrawId = GL11.glGetInteger(GL30.GL_DRAW_FRAMEBUFFER_BINDING);
@@ -115,14 +127,14 @@ public final class DefaultFramebuffer implements Framebuffer {
 
     @Override
     public void unbind() {
-        if (previousDrawId == -1) {
+        if (previousDrawId == INVALID_ID) {
             return;
         }
         unbindCallback.accept(this);
         GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, previousDrawId);
         GL30.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, previousReadId);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, previousTexture);
-        previousDrawId = -1;
+        previousDrawId = INVALID_ID;
     }
 
     @Override

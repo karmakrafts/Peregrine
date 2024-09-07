@@ -38,7 +38,7 @@ public interface Reloadable {
      * the associated reloadable object to be reordered
      * in the reload queue.
      */
-    int DEFAULT_PRIORITY = 0;
+    int DEFAULT_RELOAD_PRIORITY = 0;
 
     /**
      * A default comparator function which compares
@@ -97,7 +97,7 @@ public interface Reloadable {
     default int getReloadPriority() {
         final var clazz = getClass();
         if (!clazz.isAnnotationPresent(ReloadPriority.class)) {
-            return DEFAULT_PRIORITY;
+            return DEFAULT_RELOAD_PRIORITY;
         }
         return clazz.getAnnotation(ReloadPriority.class).value();
     }

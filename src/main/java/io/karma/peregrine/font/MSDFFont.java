@@ -93,7 +93,6 @@ public final class MSDFFont implements AutoCloseable {
             final var resultBuffer = stack.mallocInt(1);
             final var faceAddressBuffer = stack.mallocPointer(1);
             // @formatter:off
-            // ()
             LibFFI.ffi_call(NEW_MEMORY_FACE_CIF, FreeType.Functions.New_Memory_Face,
                 MemoryUtil.memByteBuffer(resultBuffer),
                 stack.pointers(

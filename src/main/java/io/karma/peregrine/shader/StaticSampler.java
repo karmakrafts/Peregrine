@@ -23,6 +23,7 @@ import io.karma.peregrine.dispose.DisposePriority;
 import io.karma.peregrine.reload.PreparePriority;
 import io.karma.peregrine.reload.ReloadPriority;
 import io.karma.peregrine.reload.Reloadable;
+import io.karma.peregrine.texture.Texture;
 import net.minecraft.server.packs.resources.ResourceProvider;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -40,9 +41,10 @@ import java.util.function.IntSupplier;
 @PreparePriority(-100)
 @DisposePriority(100)
 public final class StaticSampler implements Sampler, Reloadable, Disposable {
-    private final int id;
+    private static final long INVALID_HANDLE = 0;
     private final String name;
     private final IntSupplier textureId;
+    private int id;
 
     private StaticSampler(final int id, final String name, final IntSupplier textureId) {
         this.id = id;
@@ -86,8 +88,8 @@ public final class StaticSampler implements Sampler, Reloadable, Disposable {
 
     private long getHandle() {
         final var id = textureId.getAsInt();
-        if (id == -1) {
-            return 0;
+        if (id == Texture.INVALID_ID) {
+            return INVALID_HANDLE;
         }
         return ARBBindlessTexture.glGetTextureHandleARB(id);
     }
@@ -120,13 +122,17 @@ public final class StaticSampler implements Sampler, Reloadable, Disposable {
 
     @Override
     public void dispose() {
+        if (id == INVALID_ID) {
+            return;
+        }
         final var handle = getHandle();
-        if (handle == 0) {
+        if (handle == INVALID_HANDLE) {
             return;
         }
         if (ARBBindlessTexture.glIsTextureHandleResidentARB(handle)) {
             ARBBindlessTexture.glMakeTextureHandleNonResidentARB(handle);
         }
+        id = INVALID_ID;
     }
 
     @Override

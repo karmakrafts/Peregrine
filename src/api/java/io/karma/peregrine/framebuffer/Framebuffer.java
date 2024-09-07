@@ -18,6 +18,7 @@ package io.karma.peregrine.framebuffer;
 
 import io.karma.peregrine.Peregrine;
 import io.karma.peregrine.dispose.Disposable;
+import io.karma.peregrine.target.RenderTarget;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.Nullable;
@@ -32,7 +33,9 @@ import java.util.function.Consumer;
  * @since 31/08/2024
  */
 @OnlyIn(Dist.CLIENT)
-public interface Framebuffer extends Disposable {
+public interface Framebuffer extends RenderTarget, Disposable {
+    int INVALID_ID = -1;
+
     /**
      * Creates a new framebuffer object described by the given properties.
      *
@@ -63,18 +66,6 @@ public interface Framebuffer extends Disposable {
      * is present on this framebuffer object.
      */
     boolean hasAttachment(final AttachmentType attachment);
-
-    /**
-     * Binds this framebuffer object as the current
-     * render target for OpenGL.
-     */
-    void bind();
-
-    /**
-     * Unbinds this framebuffer object as the current
-     * render target for OpenGL.
-     */
-    void unbind();
 
     /**
      * Resize this framebuffer to the given width and

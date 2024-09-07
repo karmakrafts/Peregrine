@@ -34,6 +34,8 @@ import java.util.function.IntSupplier;
  */
 @OnlyIn(Dist.CLIENT)
 public interface Texture extends Reloadable, Disposable, IntSupplier {
+    int INVALID_ID = -1;
+
     /**
      * Creates a new empty texture object with the given properties.
      *

@@ -26,7 +26,7 @@ import java.util.function.Supplier;
 /**
  * Describes a builder pattern for creating
  * new immutable shader objects.
- * See {@link ShaderProgramBuilder#shader(Consumer)}.
+ * See {@link ShaderProgramBuilder#stage(Consumer)}.
  *
  * @author Alexander Hinze
  * @since 30/08/2024

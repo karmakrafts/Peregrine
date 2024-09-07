@@ -26,6 +26,10 @@ import io.karma.peregrine.framebuffer.Framebuffer;
 import io.karma.peregrine.framebuffer.FramebufferFactory;
 import io.karma.peregrine.reload.ReloadHandler;
 import io.karma.peregrine.shader.*;
+import io.karma.peregrine.state.BlendModeFactory;
+import io.karma.peregrine.state.RenderTypeBuilder;
+import io.karma.peregrine.state.RenderTypeFactory;
+import io.karma.peregrine.target.RenderTargetFactories;
 import io.karma.peregrine.texture.Texture;
 import io.karma.peregrine.texture.TextureFactories;
 import io.karma.peregrine.texture.TextureFilter;
@@ -35,6 +39,7 @@ import io.karma.peregrine.uniform.ScalarType;
 import io.karma.peregrine.uniform.UniformTypeFactories;
 import io.karma.peregrine.uniform.VectorType;
 import io.karma.peregrine.util.DI;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -89,6 +94,12 @@ public final class Peregrine {
     private static UniformBufferProvider globalUniforms;
     @OnlyIn(Dist.CLIENT)
     private static ShaderPreProcessorProvider defaultShaderPreProcessor;
+    @OnlyIn(Dist.CLIENT)
+    private static RenderTargetFactories renderTargetFactories;
+    @OnlyIn(Dist.CLIENT)
+    private static RenderTypeFactory renderTypeFactory;
+    @OnlyIn(Dist.CLIENT)
+    private static BlendModeFactory blendModeFactory;
 
     @OnlyIn(Dist.CLIENT)
     private static boolean supportsBindlessTextures;
@@ -107,7 +118,7 @@ public final class Peregrine {
     @OnlyIn(Dist.CLIENT)
     private static boolean supportsDirectStateAccess;
     @OnlyIn(Dist.CLIENT)
-    private static int shaderBinaryFormat;
+    private static ShaderBinaryFormat shaderBinaryFormat;
     @OnlyIn(Dist.CLIENT)
     private static int maxTextureSize;
 
@@ -178,7 +189,7 @@ public final class Peregrine {
     private static void queryExtensions() {
         LOGGER.info("Querying OpenGL extensions");
         supportsBindlessTextures = queryExtension("GL_ARB_bindless_texture");
-        supportsBinaryShaderCaching = queryExtension("GL_ARB_get_program_binary") && shaderBinaryFormat != -1;
+        supportsBinaryShaderCaching = queryExtension("GL_ARB_get_program_binary") && shaderBinaryFormat.isValid();
         supportsStorageBuffers = queryExtension("GL_ARB_shader_storage_buffer_object");
         supportsTessellationShaders = queryExtension("GL_ARB_tessellation_shader");
         supportsComputeShaders = queryExtension("GL_ARB_compute_shader");
@@ -208,18 +219,21 @@ public final class Peregrine {
             Peregrine.executorService = executorService;
             Peregrine.reloadHandler = reloadHandler;
             Peregrine.dispositionHandler = dispositionHandler;
-            textureFactories = di.get(TextureFactories.class);
-            uniformTypeFactories = di.get(UniformTypeFactories.class);
-            uniformBufferFactory = di.get(UniformBufferFactory.class);
-            shaderProgramFactory = di.get(ShaderProgramFactory.class);
-            framebufferFactory = di.get(FramebufferFactory.class);
-            defaultShaderLoader = di.get(ShaderLoaderProvider.class);
-            globalUniforms = di.get(UniformBufferProvider.class);
-            defaultShaderPreProcessor = di.get(ShaderPreProcessorProvider.class);
-            shaderBinaryFormat = Objects.requireNonNull(di.get(ShaderBinaryFormat.class)).value();
+            textureFactories = di.getSafe(TextureFactories.class);
+            uniformTypeFactories = di.getSafe(UniformTypeFactories.class);
+            uniformBufferFactory = di.getSafe(UniformBufferFactory.class);
+            shaderProgramFactory = di.getSafe(ShaderProgramFactory.class);
+            framebufferFactory = di.getSafe(FramebufferFactory.class);
+            defaultShaderLoader = di.getSafe(ShaderLoaderProvider.class);
+            globalUniforms = di.getSafe(UniformBufferProvider.class);
+            defaultShaderPreProcessor = di.getSafe(ShaderPreProcessorProvider.class);
+            renderTargetFactories = di.getSafe(RenderTargetFactories.class);
+            renderTypeFactory = di.getSafe(RenderTypeFactory.class);
+            blendModeFactory = di.getSafe(BlendModeFactory.class);
+            shaderBinaryFormat = di.getSafe(ShaderBinaryFormat.class);
 
-            if (shaderBinaryFormat != -1) {
-                LOGGER.info("Using shader binary format 0x{}", Integer.toHexString(shaderBinaryFormat));
+            if (shaderBinaryFormat.isValid()) {
+                LOGGER.info("Using shader binary format 0x{}", Integer.toHexString(shaderBinaryFormat.value()));
             }
 
             queryExtensions();
@@ -231,7 +245,7 @@ public final class Peregrine {
         });
 
         queryRegistries();
-        fontFamilyFactory = di.get(FontFamilyFactory.class);
+        fontFamilyFactory = di.getSafe(FontFamilyFactory.class);
     }
 
     /**
@@ -431,6 +445,27 @@ public final class Peregrine {
         return framebufferFactory;
     }
 
+    // TODO: document this
+    @OnlyIn(Dist.CLIENT)
+    public static RenderTargetFactories getRenderTargetFactories() {
+        ensureInitialized();
+        return renderTargetFactories;
+    }
+
+    // TODO: document this
+    @OnlyIn(Dist.CLIENT)
+    public static RenderType createRenderType(final Consumer<RenderTypeBuilder> callback) {
+        ensureInitialized();
+        return renderTypeFactory.apply(callback);
+    }
+
+    // TODO: document this
+    @OnlyIn(Dist.CLIENT)
+    public static BlendModeFactory getBlendModeFactory() {
+        ensureInitialized();
+        return blendModeFactory;
+    }
+
     /**
      * Determines whether <b>GL_ARB_bindless_texture</b> is supported
      * on the current platform.
@@ -534,7 +569,7 @@ public final class Peregrine {
      * @return the shader binary format used by Peregrine.
      */
     @OnlyIn(Dist.CLIENT)
-    public static int getShaderBinaryFormat() {
+    public static ShaderBinaryFormat getShaderBinaryFormat() {
         ensureInitialized();
         return shaderBinaryFormat;
     }
@@ -577,6 +612,7 @@ public final class Peregrine {
         return isIrisInstalled;
     }
 
+    // TODO: document this
     public record Environment(Map<String, Object> props) {
     }
 }

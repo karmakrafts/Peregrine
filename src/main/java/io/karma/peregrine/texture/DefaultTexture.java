@@ -33,7 +33,7 @@ import javax.imageio.ImageIO;
  */
 @OnlyIn(Dist.CLIENT)
 public final class DefaultTexture implements Texture {
-    private static final SimpleTextureFormat FORMAT = SimpleTextureFormat.get(GL12.GL_BGRA,
+    public static final SimpleTextureFormat FORMAT = SimpleTextureFormat.get(GL12.GL_BGRA,
         GL11.GL_RGBA8,
         GL12.GL_UNSIGNED_INT_8_8_8_8_REV);
     private final ResourceLocation location;
@@ -41,7 +41,7 @@ public final class DefaultTexture implements Texture {
     private final TextureFilter magFilter;
     private final TextureWrapMode horizontalWrapMode;
     private final TextureWrapMode verticalWrapMode;
-    private int id = -1;
+    private int id = INVALID_ID;
     private int width;
     private int height;
 
@@ -111,7 +111,11 @@ public final class DefaultTexture implements Texture {
 
     @Override
     public void dispose() {
+        if (id == INVALID_ID) {
+            return;
+        }
         GL11.glDeleteTextures(id);
+        id = INVALID_ID;
     }
 
     @Override

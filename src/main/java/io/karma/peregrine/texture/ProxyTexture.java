@@ -28,7 +28,6 @@ import org.lwjgl.opengl.GL11;
  */
 @OnlyIn(Dist.CLIENT)
 public final class ProxyTexture implements Texture {
-    private final int textureId;
     private final int width;
     private final int height;
     private final SimpleTextureFormat format;
@@ -36,6 +35,7 @@ public final class ProxyTexture implements Texture {
     private final TextureFilter magFilter;
     private final TextureWrapMode horizontalWrapMode;
     private final TextureWrapMode verticalWrapMode;
+    private int textureId;
 
     public ProxyTexture(final int textureId) {
         this.textureId = textureId;
@@ -101,7 +101,7 @@ public final class ProxyTexture implements Texture {
 
     @Override
     public void dispose() {
-        // We don't own this texture
+        textureId = INVALID_ID;
     }
 
     @Override

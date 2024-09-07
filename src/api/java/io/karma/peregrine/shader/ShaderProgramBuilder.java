@@ -68,7 +68,7 @@ public interface ShaderProgramBuilder {
      *                 of the newly created shader object.
      * @return this builder instance.
      */
-    ShaderProgramBuilder shader(final Consumer<ShaderObjectBuilder> callback);
+    ShaderProgramBuilder stage(final Consumer<ShaderObjectBuilder> callback);
 
     /**
      * Specifies a uniform variable made available

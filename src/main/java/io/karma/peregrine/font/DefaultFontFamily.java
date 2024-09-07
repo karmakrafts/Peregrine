@@ -19,6 +19,7 @@ package io.karma.peregrine.font;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Preconditions;
 import io.karma.peregrine.Peregrine;
 import io.karma.peregrine.PeregrineMod;
 import io.karma.peregrine.reload.ReloadPriority;
@@ -90,6 +91,11 @@ public final class DefaultFontFamily implements FontFamily, Reloadable {
     }
 
     @Override
+    public DistanceFieldType getDistanceFieldType() {
+        return config.sdfType;
+    }
+
+    @Override
     public float getDistanceFieldRange() {
         return config.sdfRange;
     }
@@ -141,9 +147,7 @@ public final class DefaultFontFamily implements FontFamily, Reloadable {
     public synchronized FontVariant getFont(final FontStyle style,
                                             final float size,
                                             final Object2FloatMap<String> variationAxes) {
-        if (size < 0F) {
-            throw new IllegalArgumentException("Size must be greater than or equal to zero");
-        }
+        Preconditions.checkArgument(size > 0F, "Size must be greater than zero");
         return new DefaultFontVariant(fonts.computeIfAbsent(style, s -> {
             final var variant = config.variants.get(s);
             final var locationString = variant.location;
@@ -171,6 +175,8 @@ public final class DefaultFontFamily implements FontFamily, Reloadable {
         public String name;
         @JsonProperty("sdf_range")
         public float sdfRange = 4F;
+        @JsonProperty("sdf_type")
+        public DistanceFieldType sdfType = DistanceFieldType.MSDF;
         @JsonProperty("glyph_sprite_size")
         public int glyphSpriteSize = 32;
         @JsonProperty("glyph_sprite_border")

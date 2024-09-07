@@ -14,25 +14,15 @@
  *  limitations under the License.
  */
 
-package io.karma.peregrine.shader;
+package io.karma.peregrine.color;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import io.karma.peregrine.util.RectangleCorner;
 
 /**
- * Represents a binary shader format supported
- * by the current OpenGL implementation.
- * This wrapper type is used in the initialization {@link io.karma.peregrine.util.DI}.
- *
  * @author Alexander Hinze
- * @since 30/08/2024
+ * @since 01/09/2024
  */
-@OnlyIn(Dist.CLIENT)
-public record ShaderBinaryFormat(int value) {
-    private static final int INVALID_VALUE = -1;
-    public static final ShaderBinaryFormat NONE = new ShaderBinaryFormat(INVALID_VALUE);
-
-    public boolean isValid() {
-        return value != INVALID_VALUE;
-    }
+@FunctionalInterface
+public interface ColorProvider {
+    int getColor(final RectangleCorner corner);
 }

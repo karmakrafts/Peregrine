@@ -28,6 +28,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
  */
 @OnlyIn(Dist.CLIENT)
 public interface Sampler {
+    int INVALID_ID = -1;
+
     /**
      * The per-shader-program ID of this sampler.
      * This is the value that is actually set as the uniform

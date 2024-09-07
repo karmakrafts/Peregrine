@@ -26,6 +26,8 @@ import io.karma.peregrine.uniform.UniformType;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,7 +40,8 @@ import java.util.function.Supplier;
  * @author Alexander Hinze
  * @since 30/08/2024
  */
-public class DefaultShaderProgramBuilder implements ShaderProgramBuilder {
+@OnlyIn(Dist.CLIENT)
+public final class DefaultShaderProgramBuilder implements ShaderProgramBuilder {
     private static final Consumer<ShaderProgram> IDENTITY_CALLBACK = program -> {
     };
 
@@ -174,7 +177,7 @@ public class DefaultShaderProgramBuilder implements ShaderProgramBuilder {
     }
 
     @Override
-    public ShaderProgramBuilder shader(final Consumer<ShaderObjectBuilder> callback) {
+    public ShaderProgramBuilder stage(final Consumer<ShaderObjectBuilder> callback) {
         final var builder = new DefaultShaderObjectBuilder();
         callback.accept(builder);
         objects.add(builder.build());
