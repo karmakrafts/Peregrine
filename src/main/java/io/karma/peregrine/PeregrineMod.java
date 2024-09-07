@@ -143,11 +143,15 @@ public final class PeregrineMod {
         final var forgeBus = MinecraftForge.EVENT_BUS;
         forgeBus.addListener(this::onGameShutdown);
 
-        final var di = new DI();
+        // Initialize the API
+
         final var environment = new HashMap<String, Object>();
         environment.put("is_dev_environment", isDevEnvironment);
+        final var di = new DI();
+        di.put(FontFamilyFactory.class, DefaultFontFamily::new);
+        di.put(Environment.class, new Environment(environment));
 
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+        DistExecutor.unsafeRunForDist(() -> () -> {
             final var modList = FMLLoader.getLoadingModList();
             isSodiumInstalled = modList.getModFileById("sodium") != null || modList.getModFileById("embeddium") != null;
             isIrisInstalled = modList.getModFileById("iris") != null || modList.getModFileById("oculus") != null;
@@ -156,25 +160,30 @@ public final class PeregrineMod {
             ((ReloadableResourceManager) Minecraft.getInstance().getResourceManager()).registerReloadListener(
                 RELOAD_HANDLER);
 
-            environment.put("is_sodium_installed", isSodiumInstalled);
-            environment.put("is_iris_installed", isIrisInstalled);
-            di.put(TextureFactories.class, TEXTURE_FACTORIES);
-            di.put(UniformTypeFactories.class, UNIFORM_TYPE_FACTORIES);
-            di.put(UniformBufferFactory.class, DefaultUniformBufferBuilder::build);
-            di.put(ShaderProgramFactory.class, DefaultShaderProgramBuilder::build);
-            di.put(FramebufferFactory.class, DefaultFramebufferBuilder::build);
-            di.put(RenderTypeFactory.class, DefaultRenderTypeBuilder::build);
-            di.put(BlendModeFactory.class, DefaultBlendModeBuilder::build);
-            di.put(ShaderLoaderProvider.class, SHADER_LOADER::get);
-            di.put(UniformBufferProvider.class, GLOBAL_UNIFORMS::get);
-            di.put(ShaderPreProcessorProvider.class, () -> SHADER_PRE_PROCESSOR);
-            di.put(RenderTargetFactories.class, RENDER_TARGET_FACTORIES);
-            di.put(ShaderBinaryFormat.class, detectShaderBinaryFormat());
-        });
+            Minecraft.getInstance().execute(() -> {
+                environment.put("is_sodium_installed", isSodiumInstalled);
+                environment.put("is_iris_installed", isIrisInstalled);
+                di.put(TextureFactories.class, TEXTURE_FACTORIES);
+                di.put(UniformTypeFactories.class, UNIFORM_TYPE_FACTORIES);
+                di.put(UniformBufferFactory.class, DefaultUniformBufferBuilder::build);
+                di.put(ShaderProgramFactory.class, DefaultShaderProgramBuilder::build);
+                di.put(FramebufferFactory.class, DefaultFramebufferBuilder::build);
+                di.put(RenderTypeFactory.class, DefaultRenderTypeBuilder::build);
+                di.put(BlendModeFactory.class, DefaultBlendModeBuilder::build);
+                di.put(ShaderLoaderProvider.class, SHADER_LOADER::get);
+                di.put(UniformBufferProvider.class, GLOBAL_UNIFORMS::get);
+                di.put(ShaderPreProcessorProvider.class, () -> SHADER_PRE_PROCESSOR);
+                di.put(RenderTargetFactories.class, RENDER_TARGET_FACTORIES);
+                di.put(ShaderBinaryFormat.class, detectShaderBinaryFormat());
 
-        di.put(FontFamilyFactory.class, DefaultFontFamily::new);
-        di.put(Environment.class, new Environment(environment));
-        Peregrine.init(EXECUTOR_SERVICE, RELOAD_HANDLER, DISPOSE_HANDLER, di);
+                Peregrine.init(EXECUTOR_SERVICE, RELOAD_HANDLER, DISPOSE_HANDLER, di);
+            });
+
+            return null;
+        }, () -> () -> {
+            Peregrine.init(EXECUTOR_SERVICE, RELOAD_HANDLER, DISPOSE_HANDLER, di);
+            return null;
+        });
     }
 
     public static PeregrineMod getInstance() {
