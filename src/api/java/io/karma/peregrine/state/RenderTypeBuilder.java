@@ -16,11 +16,13 @@
 
 package io.karma.peregrine.state;
 
+import com.mojang.blaze3d.platform.GlStateManager.LogicOp;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat.Mode;
 import io.karma.peregrine.shader.ShaderProgram;
 import io.karma.peregrine.shader.ShaderProgramBuilder;
 import io.karma.peregrine.target.RenderTarget;
+import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -48,6 +50,8 @@ public interface RenderTypeBuilder {
 
     RenderTypeBuilder affectsCrumbling(final boolean affectsCrumbling);
 
+    RenderTypeBuilder shader(final ShaderInstance program);
+
     RenderTypeBuilder shader(final ShaderProgram program);
 
     RenderTypeBuilder shader(final Consumer<ShaderProgramBuilder> callback);
@@ -61,6 +65,10 @@ public interface RenderTypeBuilder {
     RenderTypeBuilder overlay(final boolean overlay);
 
     RenderTypeBuilder outline(final boolean outline);
+
+    RenderTypeBuilder colorLogic(final boolean colorLogic);
+
+    RenderTypeBuilder colorLogicOp(final LogicOp logicOp);
 
     RenderTypeBuilder layering(final Layering layering);
 

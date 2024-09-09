@@ -26,6 +26,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 
 import java.util.EnumMap;
+import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -151,6 +152,11 @@ public final class DefaultFramebuffer implements Framebuffer {
     @Override
     public int getHeight() {
         return height;
+    }
+
+    @Override
+    public List<Attachment> getAttachments() {
+        return List.copyOf(attachments.values());
     }
 
     @Override

@@ -16,6 +16,8 @@
 
 package io.karma.peregrine.state;
 
+import com.mojang.blaze3d.platform.GlStateManager.LogicOp;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat.Mode;
 import io.karma.peregrine.PeregrineMod;
@@ -25,16 +27,12 @@ import io.karma.peregrine.shader.ShaderProgramBuilder;
 import io.karma.peregrine.target.RenderTarget;
 import io.karma.peregrine.util.Requires;
 import net.minecraft.client.renderer.RenderStateShard;
-import net.minecraft.client.renderer.RenderStateShard.DepthTestStateShard;
-import net.minecraft.client.renderer.RenderStateShard.EmptyTextureStateShard;
-import net.minecraft.client.renderer.RenderStateShard.LayeringStateShard;
-import net.minecraft.client.renderer.RenderStateShard.TransparencyStateShard;
+import net.minecraft.client.renderer.RenderStateShard.*;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderType.CompositeState;
+import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL20;
 
 import java.util.function.Consumer;
 
@@ -52,7 +50,7 @@ public final class DefaultRenderTypeBuilder implements RenderTypeBuilder {
     private Mode mode = Mode.TRIANGLES;
     private int bufferSize = 128;
     private RenderTarget target = PeregrineMod.RENDER_TARGET_FACTORIES.getMainTarget();
-    private ShaderProgram shader;
+    private ShaderStateShard shader;
     private BlendMode blendMode = Transparency.NONE;
     private Layering layering = Layering.NONE;
     private DepthTest depthTest = DepthTest.LEQUAL;
@@ -62,6 +60,8 @@ public final class DefaultRenderTypeBuilder implements RenderTypeBuilder {
     private boolean lightmap;
     private boolean overlay;
     private boolean culling = true;
+    private boolean colorLogic;
+    private LogicOp colorLogicOp = LogicOp.SET;
     private RenderCallback onPreRender = IDENTITY_CALLBACK;
     private RenderCallback onPostRender = IDENTITY_CALLBACK;
 
@@ -79,12 +79,12 @@ public final class DefaultRenderTypeBuilder implements RenderTypeBuilder {
             return RenderStateShard.TRANSLUCENT_TRANSPARENCY;
         }
         return new TransparencyStateShard(blendMode.toString(), () -> {
-            GL11.glEnable(GL11.GL_BLEND);
-            GL20.glBlendFuncSeparate(blendMode.getColorSourceFactor().value,
+            RenderSystem.enableBlend();
+            RenderSystem.blendFuncSeparate(blendMode.getColorSourceFactor().value,
                 blendMode.getColorDestFactor().value,
                 blendMode.getSourceFactor().value,
                 blendMode.getDestFactor().value);
-        }, () -> GL11.glDisable(GL11.GL_BLEND));
+        }, RenderSystem::disableBlend);
     }
 
     private static LayeringStateShard getLayeringState(final Layering layering) {
@@ -104,6 +104,19 @@ public final class DefaultRenderTypeBuilder implements RenderTypeBuilder {
         };
     }
 
+    private ColorLogicStateShard getColorLogicState(final LogicOp logicOp) {
+        if (!colorLogic) {
+            return RenderStateShard.NO_COLOR_LOGIC;
+        }
+        if (logicOp == LogicOp.OR_REVERSE) {
+            return RenderStateShard.OR_REVERSE_COLOR_LOGIC;
+        }
+        return new ColorLogicStateShard(logicOp.name(), () -> {
+            RenderSystem.enableColorLogicOp();
+            RenderSystem.logicOp(logicOp);
+        }, RenderSystem::disableColorLogicOp);
+    }
+
     RenderType build() {
         Requires.that(name != null, "Name must be specified");
         Requires.that(vertexFormat != null, "Vertex format must be specified");
@@ -111,7 +124,7 @@ public final class DefaultRenderTypeBuilder implements RenderTypeBuilder {
         // @formatter:off
         return RenderType.create(name, vertexFormat, mode, bufferSize, affectsCrumbling, sorting,
             CompositeState.builder()
-                .setShaderState(shader.asStateShard())
+                .setShaderState(shader)
                 .setOutputState(target.asStateShard())
                 .setCullState(culling ? RenderStateShard.CULL : RenderStateShard.NO_CULL)
                 .setLightmapState(lightmap ? RenderStateShard.LIGHTMAP : RenderStateShard.NO_LIGHTMAP)
@@ -119,12 +132,31 @@ public final class DefaultRenderTypeBuilder implements RenderTypeBuilder {
                 .setTransparencyState(getTransparencyState(blendMode))
                 .setLayeringState(getLayeringState(layering))
                 .setDepthTestState(getDepthTestState(depthTest))
+                .setColorLogicState(getColorLogicState(colorLogicOp))
                 .setTexturingState(RenderStateShard.DEFAULT_TEXTURING)
                 .setWriteMaskState(RenderStateShard.COLOR_DEPTH_WRITE)
                 .setTextureState(new EmptyTextureStateShard(onPreRender, onPostRender))
                 .createCompositeState(outline)
         );
         // @formatter:on
+    }
+
+    @Override
+    public RenderTypeBuilder shader(final ShaderInstance program) {
+        shader = new ShaderStateShard(() -> program);
+        return this;
+    }
+
+    @Override
+    public RenderTypeBuilder colorLogic(final boolean colorLogic) {
+        this.colorLogic = colorLogic;
+        return this;
+    }
+
+    @Override
+    public RenderTypeBuilder colorLogicOp(final LogicOp logicOp) {
+        colorLogicOp = logicOp;
+        return this;
     }
 
     @Override
@@ -183,13 +215,13 @@ public final class DefaultRenderTypeBuilder implements RenderTypeBuilder {
 
     @Override
     public RenderTypeBuilder shader(final ShaderProgram program) {
-        shader = program;
+        shader = program.asStateShard();
         return this;
     }
 
     @Override
     public RenderTypeBuilder shader(final Consumer<ShaderProgramBuilder> callback) {
-        shader = DefaultShaderProgramBuilder.build(builder -> callback.accept(builder.format(vertexFormat)));
+        shader = DefaultShaderProgramBuilder.build(builder -> callback.accept(builder.format(vertexFormat))).asStateShard();
         return this;
     }
 

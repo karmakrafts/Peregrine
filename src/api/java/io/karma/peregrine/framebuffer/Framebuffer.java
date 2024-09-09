@@ -23,6 +23,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -56,6 +57,15 @@ public interface Framebuffer extends RenderTarget, Disposable {
      */
     @Nullable
     Attachment getAttachment(final AttachmentType attachment);
+
+    /**
+     * Retrieves a list of all attachments attached
+     * to this framebuffer object in no particular order.
+     *
+     * @return a list of all attachments attached to this
+     * framebuffer object.
+     */
+    List<Attachment> getAttachments();
 
     /**
      * Determines whether the given attachment type
@@ -100,4 +110,30 @@ public interface Framebuffer extends RenderTarget, Disposable {
      * @return the height of this framebuffer in pixels.
      */
     int getHeight();
+
+    /**
+     * Determines whether this framebuffer has some type of depth attachment.
+     * This includes {@code DEPTH} and {@code DEPTH_STENCIL} type attachments.
+     *
+     * @return true if this framebuffer has a depth attachment.
+     */
+    default boolean hasDepthAttachment() {
+        return getAttachments().stream().anyMatch(att -> {
+            final var type = att.getType();
+            return type == AttachmentType.DEPTH || type == AttachmentType.DEPTH_STENCIL;
+        });
+    }
+
+    /**
+     * Determines whether this framebuffer has some type of stencil attachment.
+     * This includes {@code STENCIL} and {@code DEPTH_STENCIL} type attachments.
+     *
+     * @return true if this framebuffer has a stencil attachment.
+     */
+    default boolean hasStencilAttachment() {
+        return getAttachments().stream().anyMatch(att -> {
+            final var type = att.getType();
+            return type == AttachmentType.STENCIL || type == AttachmentType.DEPTH_STENCIL;
+        });
+    }
 }
