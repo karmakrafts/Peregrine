@@ -19,6 +19,7 @@ package io.karma.peregrine.font;
 import io.karma.peregrine.Peregrine;
 import io.karma.peregrine.PeregrineMod;
 import io.karma.peregrine.texture.*;
+import io.karma.peregrine.util.Requires;
 import it.unimi.dsi.fastutil.chars.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceProvider;
@@ -85,9 +86,7 @@ public final class DefaultFontTexture implements FontTexture {
         final var numChars = font.getSupportedChars().toSet().size();
         int size = 2;
         while ((size * size) < numChars) {
-            if (size > maxSize) {
-                throw new IllegalStateException("Font atlas too large, not supported yet");
-            }
+            Requires.that(size < maxSize, "Font atlas too large, not supported yet");
             size <<= 1;
         }
         this.sizeInSlots = size;

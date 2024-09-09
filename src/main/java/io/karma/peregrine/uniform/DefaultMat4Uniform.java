@@ -18,8 +18,10 @@ package io.karma.peregrine.uniform;
 
 import io.karma.peregrine.shader.ShaderProgram;
 import io.karma.peregrine.uniform.MatrixUniform.Mat4Uniform;
+import io.karma.peregrine.util.Requires;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.joml.Matrix2fc;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
 import org.lwjgl.opengl.GL20;
@@ -36,10 +38,7 @@ public final class DefaultMat4Uniform extends AbstractUniform<Matrix4f> implemen
 
     DefaultMat4Uniform(final String name, final Object defaultValue) {
         super(name);
-        if (!(defaultValue instanceof Matrix4fc matrix)) {
-            throw new IllegalArgumentException("Default matrix is not an integer");
-        }
-        value.set(matrix);
+        value.set(Requires.instanceOf(defaultValue, Matrix4fc.class, "Default matrix is not a float matrix"));
     }
 
     @Override

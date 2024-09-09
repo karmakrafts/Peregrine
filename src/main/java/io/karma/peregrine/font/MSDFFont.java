@@ -18,6 +18,7 @@ package io.karma.peregrine.font;
 
 import io.karma.peregrine.Peregrine;
 import io.karma.peregrine.util.MemoryUtils;
+import io.karma.peregrine.util.Requires;
 import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -76,9 +77,7 @@ public final class MSDFFont implements AutoCloseable {
         try (final var stack = MemoryStack.stackPush()) {
             final var ftAddressBuffer = stack.mallocPointer(1);
 
-            if (FreeType.FT_Init_FreeType(ftAddressBuffer) != FreeType.FT_Err_Ok) {
-                throw new IllegalStateException("Could not create FreeType library");
-            }
+            Requires.that(FreeType.FT_Init_FreeType(ftAddressBuffer) == FreeType.FT_Err_Ok, "Could not create FreeType library");
             library = Checks.check(ftAddressBuffer.get());
             Peregrine.LOGGER.debug("Created FreeType instance at 0x{}", Long.toHexString(library));
 

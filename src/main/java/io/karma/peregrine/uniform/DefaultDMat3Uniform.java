@@ -18,8 +18,10 @@ package io.karma.peregrine.uniform;
 
 import io.karma.peregrine.shader.ShaderProgram;
 import io.karma.peregrine.uniform.MatrixUniform.DMat3Uniform;
+import io.karma.peregrine.util.Requires;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.joml.Matrix2dc;
 import org.joml.Matrix3d;
 import org.joml.Matrix3dc;
 import org.lwjgl.opengl.ARBGPUShaderFP64;
@@ -36,10 +38,7 @@ public final class DefaultDMat3Uniform extends AbstractUniform<Matrix3d> impleme
 
     DefaultDMat3Uniform(final String name, final Object defaultValue) {
         super(name);
-        if (!(defaultValue instanceof Matrix3dc matrix)) {
-            throw new IllegalArgumentException("Default matrix is not an integer");
-        }
-        value.set(matrix);
+        value.set(Requires.instanceOf(defaultValue, Matrix3dc.class, "Default matrix is not a double matrix"));
     }
 
     @Override

@@ -17,6 +17,7 @@
 package io.karma.peregrine.framebuffer;
 
 import com.google.common.base.Preconditions;
+import io.karma.peregrine.util.Requires;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -45,29 +46,27 @@ public final class DefaultFramebufferBuilder implements FramebufferBuilder {
 
     @Override
     public FramebufferBuilder width(final int width) {
-        Preconditions.checkArgument(width > 0, "Width must be greater than 0");
+        Requires.that(width > 0, "Width must be greater than 0");
         this.width = width;
         return this;
     }
 
     @Override
     public FramebufferBuilder height(final int height) {
-        Preconditions.checkArgument(height > 0, "Height must be greater than 0");
+        Requires.that(height > 0, "Height must be greater than 0");
         this.height = height;
         return this;
     }
 
     @Override
     public FramebufferBuilder attachment(final Consumer<AttachmentBuilder> callback) {
-        Preconditions.checkArgument(width > 0, "Width must be greater than 0");
-        Preconditions.checkArgument(height > 0, "Height must be greater than 0");
+        Requires.that(width > 0, "Width must be greater than 0");
+        Requires.that(height > 0, "Height must be greater than 0");
         final var builder = new DefaultAttachmentBuilder(width, height);
         callback.accept(builder);
         final var attachment = builder.build();
         final var type = attachment.getType();
-        if (attachments.containsKey(type)) {
-            throw new IllegalArgumentException("Framebuffer already contains attachment of same type");
-        }
+        Requires.that(!attachments.containsKey(type), "Framebuffer already contains attachment of same type");
         attachments.put(type, attachment);
         return this;
     }

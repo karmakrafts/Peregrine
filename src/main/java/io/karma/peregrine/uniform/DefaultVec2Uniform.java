@@ -18,10 +18,12 @@ package io.karma.peregrine.uniform;
 
 import io.karma.peregrine.shader.ShaderProgram;
 import io.karma.peregrine.uniform.VectorUniform.Vec2Uniform;
+import io.karma.peregrine.util.Requires;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
+import org.joml.Vector2ic;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.system.MemoryUtil;
 
@@ -35,10 +37,7 @@ public final class DefaultVec2Uniform extends AbstractUniform<Vector2f> implemen
 
     DefaultVec2Uniform(final String name, final Object defaultValue) {
         super(name);
-        if (!(defaultValue instanceof Vector2fc vector)) {
-            throw new IllegalArgumentException("Default value is not an integer");
-        }
-        value.set(vector);
+        value.set(Requires.instanceOf(defaultValue, Vector2fc.class, "Default value is not a float vector"));
     }
 
     @Override

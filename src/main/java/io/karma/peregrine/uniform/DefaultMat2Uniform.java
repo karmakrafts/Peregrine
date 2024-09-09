@@ -18,6 +18,7 @@ package io.karma.peregrine.uniform;
 
 import io.karma.peregrine.shader.ShaderProgram;
 import io.karma.peregrine.uniform.MatrixUniform.Mat2Uniform;
+import io.karma.peregrine.util.Requires;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Matrix2f;
@@ -36,10 +37,7 @@ public final class DefaultMat2Uniform extends AbstractUniform<Matrix2f> implemen
 
     DefaultMat2Uniform(final String name, final Object defaultValue) {
         super(name);
-        if (!(defaultValue instanceof Matrix2fc matrix)) {
-            throw new IllegalArgumentException("Default matrix is not an integer");
-        }
-        value.set(matrix);
+        value.set(Requires.instanceOf(defaultValue, Matrix2fc.class, "Default matrix is not a float matrix"));
     }
 
     @Override

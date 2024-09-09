@@ -19,6 +19,7 @@ package io.karma.peregrine.uniform;
 import io.karma.peregrine.shader.ShaderProgram;
 import io.karma.peregrine.uniform.ScalarUniform.DoubleUniform;
 import io.karma.peregrine.util.HashUtils;
+import io.karma.peregrine.util.Requires;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.opengl.ARBGPUShaderFP64;
@@ -34,10 +35,7 @@ public final class DefaultDoubleUniform extends AbstractUniform<Double> implemen
 
     DefaultDoubleUniform(final String name, final Object defaultValue) {
         super(name);
-        if (!(defaultValue instanceof Number number)) {
-            throw new IllegalArgumentException("Default value is not a number");
-        }
-        value = number.doubleValue();
+        value = Requires.instanceOf(defaultValue, Number.class, "Default value is not a number").doubleValue();
     }
 
     @Override

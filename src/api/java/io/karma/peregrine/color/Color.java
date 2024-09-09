@@ -22,6 +22,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
 import io.karma.peregrine.util.RectangleCorner;
+import io.karma.peregrine.util.Requires;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.material.MapColor;
@@ -88,7 +89,7 @@ public final class Color implements ColorProvider, Comparable<Color> {
 
     @JsonIgnore
     public Color(final float[] values) {
-        Preconditions.checkArgument(values.length >= 3 && values.length <= 4, "Array has invalid size");
+        Requires.that(values.length >= 3 && values.length <= 4, "Array has invalid size");
         r = values[0];
         g = values[1];
         b = values[2];
@@ -182,14 +183,14 @@ public final class Color implements ColorProvider, Comparable<Color> {
     }
 
     public static void transformSRGBToLinearRGB(final float[] values) {
-        Preconditions.checkArgument(values.length >= 3, "Array has invalid size");
+        Requires.that(values.length >= 3, "Array has invalid size");
         values[0] = applyLinearGamma(values[0]);
         values[1] = applyLinearGamma(values[1]);
         values[2] = applyLinearGamma(values[2]);
     }
 
     public static void transformLinearRGBToSRGB(final float[] values) {
-        Preconditions.checkArgument(values.length >= 3, "Array has invalid size");
+        Requires.that(values.length >= 3, "Array has invalid size");
         values[0] = removeLinearGamma(values[0]);
         values[1] = removeLinearGamma(values[1]);
         values[2] = removeLinearGamma(values[2]);
@@ -197,14 +198,14 @@ public final class Color implements ColorProvider, Comparable<Color> {
 
     // https://en.wikipedia.org/wiki/CIE_1931_color_space
     public static void transformRGBToXYZ(final float[] values) {
-        Preconditions.checkArgument(values.length >= 3, "Array has invalid size");
+        Requires.that(values.length >= 3, "Array has invalid size");
         values[0] = RGB_TO_XYZ_COEFFS[0][0] * values[0] + RGB_TO_XYZ_COEFFS[0][1] * values[1] + RGB_TO_XYZ_COEFFS[0][2] * values[2];
         values[1] = RGB_TO_XYZ_COEFFS[1][0] * values[0] + RGB_TO_XYZ_COEFFS[1][1] * values[1] + RGB_TO_XYZ_COEFFS[1][2] * values[2];
         values[2] = RGB_TO_XYZ_COEFFS[2][0] * values[0] + RGB_TO_XYZ_COEFFS[2][1] * values[1] + RGB_TO_XYZ_COEFFS[2][2] * values[2];
     }
 
     public static void transformXYZToRGB(final float[] values) {
-        Preconditions.checkArgument(values.length >= 3, "Array has invalid size");
+        Requires.that(values.length >= 3, "Array has invalid size");
         values[0] = XYZ_TO_RGB_COEFFS[0][0] * values[0] + XYZ_TO_RGB_COEFFS[0][1] * values[1] + XYZ_TO_RGB_COEFFS[0][2] * values[2];
         values[1] = XYZ_TO_RGB_COEFFS[1][0] * values[0] + XYZ_TO_RGB_COEFFS[1][1] * values[1] + XYZ_TO_RGB_COEFFS[1][2] * values[2];
         values[2] = XYZ_TO_RGB_COEFFS[2][0] * values[0] + XYZ_TO_RGB_COEFFS[2][1] * values[1] + XYZ_TO_RGB_COEFFS[2][2] * values[2];
@@ -225,7 +226,7 @@ public final class Color implements ColorProvider, Comparable<Color> {
     }
 
     public static void transformRGBToLAB(final float[] values) {
-        Preconditions.checkArgument(values.length >= 3, "Array has invalid size");
+        Requires.that(values.length >= 3, "Array has invalid size");
         transformRGBToXYZ(values);
         final var fy = transformToLAB(values[1] / D65_WHITE_POINT[1]);
         values[0] = (116F * fy) - 16F;
@@ -234,7 +235,7 @@ public final class Color implements ColorProvider, Comparable<Color> {
     }
 
     public static void transformLABToRGB(final float[] values) {
-        Preconditions.checkArgument(values.length >= 3, "Array has invalid size");
+        Requires.that(values.length >= 3, "Array has invalid size");
         final var l = values[0];
         final var fy = (l + 16F) / 116F;
         final var fx = values[1] / 500F + fy;
@@ -258,7 +259,7 @@ public final class Color implements ColorProvider, Comparable<Color> {
 
     // https://en.wikipedia.org/wiki/HCL_color_space
     public static void transformRGBToLCH(final float[] values) {
-        Preconditions.checkArgument(values.length >= 3, "Array has invalid size");
+        Requires.that(values.length >= 3, "Array has invalid size");
         transformRGBToLAB(values);
         final var a = values[1];
         final var b = values[2];
@@ -268,7 +269,7 @@ public final class Color implements ColorProvider, Comparable<Color> {
 
     @JsonIgnore
     public void storeRGBInto(final float[] values) {
-        Preconditions.checkArgument(values.length >= 3, "Array has invalid size");
+        Requires.that(values.length >= 3, "Array has invalid size");
         values[0] = r;
         values[1] = g;
         values[2] = b;

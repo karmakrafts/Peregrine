@@ -19,6 +19,7 @@ package io.karma.peregrine.buffer;
 import io.karma.peregrine.shader.ShaderProgram;
 import io.karma.peregrine.uniform.Uniform;
 import io.karma.peregrine.uniform.UniformType;
+import io.karma.peregrine.util.Requires;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -48,9 +49,7 @@ public final class DefaultUniformBufferBuilder implements UniformBufferBuilder {
 
     @Override
     public UniformBufferBuilder uniform(final String name, final UniformType type) {
-        if (uniforms.containsKey(name)) {
-            throw new IllegalArgumentException(String.format("Uniform '%s' is already defined", name));
-        }
+        Requires.that(!uniforms.containsKey(name), () -> String.format("Uniform '%s' is already defined", name));
         uniforms.put(name, type.create(name));
         return this;
     }

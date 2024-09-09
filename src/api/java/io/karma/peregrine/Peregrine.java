@@ -39,6 +39,7 @@ import io.karma.peregrine.uniform.ScalarType;
 import io.karma.peregrine.uniform.UniformTypeFactories;
 import io.karma.peregrine.uniform.VectorType;
 import io.karma.peregrine.util.DI;
+import io.karma.peregrine.util.Requires;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -166,9 +167,7 @@ public final class Peregrine {
     // ================================================
 
     private static void ensureInitialized() {
-        if (!isInitialized.get()) {
-            throw new IllegalStateException("Peregrine is not initialized");
-        }
+        Requires.that(isInitialized.get(), "Peregrine is not initialized");
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -207,9 +206,7 @@ public final class Peregrine {
                      final ReloadHandler reloadHandler,
                      final DispositionHandler dispositionHandler,
                      final DI di) {
-        if (!isInitialized.compareAndSet(false, true)) {
-            throw new IllegalStateException("Peregrine is already initialized");
-        }
+        Requires.that(isInitialized.compareAndSet(false, true), "Peregrine is already initialized");
 
         LOGGER.info("Initializing Peregrine");
         final var environment = Objects.requireNonNull(di.get(Environment.class)).props;

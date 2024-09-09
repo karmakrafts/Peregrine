@@ -18,8 +18,10 @@ package io.karma.peregrine.uniform;
 
 import io.karma.peregrine.shader.ShaderProgram;
 import io.karma.peregrine.uniform.VectorUniform.Vec3Uniform;
+import io.karma.peregrine.util.Requires;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.joml.Vector2fc;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import org.lwjgl.opengl.GL20;
@@ -35,10 +37,7 @@ public final class DefaultVec3Uniform extends AbstractUniform<Vector3f> implemen
 
     DefaultVec3Uniform(final String name, final Object defaultValue) {
         super(name);
-        if (!(defaultValue instanceof Vector3fc vector)) {
-            throw new IllegalArgumentException("Default value is not an integer");
-        }
-        value.set(vector);
+        value.set(Requires.instanceOf(defaultValue, Vector3fc.class, "Default value is not a float vector"));
     }
 
     @Override

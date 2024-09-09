@@ -16,9 +16,9 @@
 
 package io.karma.peregrine.state;
 
-import com.google.common.base.Preconditions;
 import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
 import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
+import io.karma.peregrine.util.Requires;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -42,10 +42,10 @@ public final class DefaultBlendModeBuilder implements BlendModeBuilder {
     }
 
     DefaultBlendMode build() {
-        Preconditions.checkArgument(colorSourceFactor != null, "Color source factor must be specified");
-        Preconditions.checkArgument(alphaSourceFactor != null, "Alpha source factor must be specified");
-        Preconditions.checkArgument(colorDestFactor != null, "Color dest factor must be specified");
-        Preconditions.checkArgument(alphaDestFactor != null, "Alpha dest factor must be specified");
+        Requires.that(colorSourceFactor != null, "Color source factor must be specified");
+        Requires.that(alphaSourceFactor != null, "Alpha source factor must be specified");
+        Requires.that(colorDestFactor != null, "Color dest factor must be specified");
+        Requires.that(alphaDestFactor != null, "Alpha dest factor must be specified");
         return new DefaultBlendMode(colorSourceFactor, alphaSourceFactor, colorDestFactor, alphaDestFactor);
     }
 

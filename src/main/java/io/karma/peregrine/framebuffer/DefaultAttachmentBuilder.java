@@ -20,6 +20,7 @@ import com.google.common.base.Preconditions;
 import io.karma.peregrine.texture.TextureFilter;
 import io.karma.peregrine.texture.TextureFormat;
 import io.karma.peregrine.texture.TextureWrapMode;
+import io.karma.peregrine.util.Requires;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -44,7 +45,8 @@ public final class DefaultAttachmentBuilder implements AttachmentBuilder {
     }
 
     public DefaultAttachment build() {
-        Preconditions.checkArgument(format != null, "Texture format must be specified");
+
+        Requires.that(format != null, "Texture format must be specified");
         return new DefaultAttachment(width,
             height,
             type,

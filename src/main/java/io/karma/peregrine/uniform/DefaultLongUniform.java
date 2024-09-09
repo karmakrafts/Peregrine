@@ -19,6 +19,7 @@ package io.karma.peregrine.uniform;
 import io.karma.peregrine.shader.ShaderProgram;
 import io.karma.peregrine.uniform.ScalarUniform.LongUniform;
 import io.karma.peregrine.util.HashUtils;
+import io.karma.peregrine.util.Requires;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.opengl.ARBGPUShaderInt64;
@@ -34,10 +35,7 @@ public final class DefaultLongUniform extends AbstractUniform<Long> implements L
 
     DefaultLongUniform(final String name, final Object defaultValue) {
         super(name);
-        if (!(defaultValue instanceof Number number)) {
-            throw new IllegalArgumentException("Default value is not a number");
-        }
-        value = number.longValue();
+        value = Requires.instanceOf(defaultValue, Number.class, "Default value is not a number").longValue();
     }
 
     @Override

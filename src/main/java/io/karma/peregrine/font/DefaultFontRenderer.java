@@ -17,7 +17,7 @@
 package io.karma.peregrine.font;
 
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormat.Mode;
 import io.karma.peregrine.Peregrine;
 import io.karma.peregrine.PeregrineMod;
 import io.karma.peregrine.color.ColorProvider;
@@ -25,11 +25,11 @@ import io.karma.peregrine.reload.Reloadable;
 import io.karma.peregrine.shader.DefaultShaderProgramBuilder;
 import io.karma.peregrine.shader.ShaderProgram;
 import io.karma.peregrine.shader.ShaderType;
+import io.karma.peregrine.state.DefaultRenderTypeBuilder;
+import io.karma.peregrine.state.Transparency;
 import io.karma.peregrine.target.RenderTarget;
 import it.unimi.dsi.fastutil.objects.Object2FloatMap;
 import net.minecraft.Util;
-import net.minecraft.client.renderer.RenderStateShard;
-import net.minecraft.client.renderer.RenderStateShard.EmptyTextureStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceProvider;
@@ -69,28 +69,16 @@ public final class DefaultFontRenderer implements FontRenderer, Reloadable {
         this.renderTarget = renderTarget;
         // @formatter:off
         renderType = Util.memoize(ctx -> {
-            final var fontAtlas = ctx.texture;
-            final var fontLocation = fontAtlas.getFont().getLocation();
-            return RenderType.create(String.format("font_%s_%s", fontLocation.getNamespace(), fontLocation.getPath()),
-                DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.TRIANGLES, 256, false, false,
-                RenderType.CompositeState.builder()
-                    .setCullState(RenderStateShard.NO_CULL)
-                    .setShaderState(SHADER.asStateShard())
-                    .setOutputState(renderTarget.asStateShard())
-                    .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
-                    .setTexturingState(RenderStateShard.DEFAULT_TEXTURING)
-                    .setLayeringState(RenderStateShard.POLYGON_OFFSET_LAYERING)
-                    .setDepthTestState(RenderStateShard.LEQUAL_DEPTH_TEST)
-                    .setTextureState(new EmptyTextureStateShard(
-                        () -> {
-                            SHADER.setSampler("Sampler0", fontAtlas.getId());
-                            final var uniformCache = SHADER.getUniforms();
-                            final var range = fontAtlas.getSDFRange() * fontAtlas.getFont().getFamily().getDistanceFieldRange();
-                            uniformCache.getFloat("PxRange").setFloat((ctx.scale / fontAtlas.getSpriteSize()) * range);
-                        },
-                        () -> {}
-                    ))
-                    .createCompositeState(false)
+            final var location = ctx.texture.getFont().getLocation();
+            return DefaultRenderTypeBuilder.build(it -> it
+                .name(String.format("font_%s_%s", location.getNamespace(), location.getPath().replace('/', '_')))
+                .vertexFormat(DefaultVertexFormat.POSITION_COLOR_TEX)
+                .mode(Mode.TRIANGLES)
+                .blendMode(Transparency.TRANSPARENCY)
+                .bufferSizeInVertices(1024)
+                .culling(false)
+                .sorting(true)
+                .shader(SHADER)
             );
         });
         // @formatter:on

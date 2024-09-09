@@ -18,6 +18,7 @@ package io.karma.peregrine.uniform;
 
 import io.karma.peregrine.shader.ShaderProgram;
 import io.karma.peregrine.uniform.VectorUniform.DVec3Uniform;
+import io.karma.peregrine.util.Requires;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Vector3d;
@@ -35,10 +36,7 @@ public final class DefaultDVec3Uniform extends AbstractUniform<Vector3d> impleme
 
     DefaultDVec3Uniform(final String name, final Object defaultValue) {
         super(name);
-        if (!(defaultValue instanceof Vector3dc vector)) {
-            throw new IllegalArgumentException("Default value is not an integer");
-        }
-        value.set(vector);
+        value.set(Requires.instanceOf(defaultValue, Vector3dc.class, "Default value is not a double vector"));
     }
 
     @Override

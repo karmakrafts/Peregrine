@@ -23,6 +23,7 @@ import io.karma.peregrine.buffer.UniformBuffer;
 import io.karma.peregrine.texture.Texture;
 import io.karma.peregrine.uniform.Uniform;
 import io.karma.peregrine.uniform.UniformType;
+import io.karma.peregrine.util.Requires;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.resources.ResourceLocation;
@@ -84,81 +85,63 @@ public final class DefaultShaderProgramBuilder implements ShaderProgramBuilder {
 
     @Override
     public ShaderProgramBuilder define(final String name) {
-        if (defines.containsKey(name)) {
-            throw new IllegalArgumentException(String.format("Define '%s' already exists", name));
-        }
+        Requires.that(!defines.containsKey(name), () -> String.format("Define '%s' already exists", name));
         defines.put(name, 1);
         return this;
     }
 
     @Override
     public ShaderProgramBuilder define(final String name, final boolean value) {
-        if (defines.containsKey(name)) {
-            throw new IllegalArgumentException(String.format("Define '%s' already exists", name));
-        }
+        Requires.that(!defines.containsKey(name), () -> String.format("Define '%s' already exists", name));
         defines.put(name, value ? 1 : 0);
         return this;
     }
 
     @Override
     public ShaderProgramBuilder define(final String name, final int value) {
-        if (defines.containsKey(name)) {
-            throw new IllegalArgumentException(String.format("Define '%s' already exists", name));
-        }
+        Requires.that(!defines.containsKey(name), () -> String.format("Define '%s' already exists", name));
         defines.put(name, value);
         return this;
     }
 
     @Override
     public ShaderProgramBuilder define(final String name, final float value) {
-        if (defines.containsKey(name)) {
-            throw new IllegalArgumentException(String.format("Define '%s' already exists", name));
-        }
+        Requires.that(!defines.containsKey(name), () -> String.format("Define '%s' already exists", name));
         defines.put(name, value);
         return this;
     }
 
     @Override
     public ShaderProgramBuilder constant(final String name, final int value) {
-        if (constants.containsKey(name)) {
-            throw new IllegalArgumentException(String.format("Constant '%s' is already defined", name));
-        }
+        Requires.that(!constants.containsKey(name), () -> String.format("Constant '%s' already exists", name));
         constants.put(name, value);
         return this;
     }
 
     @Override
     public ShaderProgramBuilder constant(final String name, final float value) {
-        if (constants.containsKey(name)) {
-            throw new IllegalArgumentException(String.format("Constant '%s' is already defined", name));
-        }
+        Requires.that(!constants.containsKey(name), () -> String.format("Constant '%s' already exists", name));
         constants.put(name, value);
         return this;
     }
 
     @Override
     public ShaderProgramBuilder constant(final String name, final boolean value) {
-        if (constants.containsKey(name)) {
-            throw new IllegalArgumentException(String.format("Constant '%s' is already defined", name));
-        }
+        Requires.that(!constants.containsKey(name), () -> String.format("Constant '%s' already exists", name));
         constants.put(name, value);
         return this;
     }
 
     @Override
     public ShaderProgramBuilder sampler(final String name) {
-        if (samplers.containsKey(name)) {
-            throw new IllegalArgumentException(String.format("Sampler '%s' is already defined", name));
-        }
+        Requires.that(!samplers.containsKey(name), () -> String.format("Sampler '%s' already exists", name));
         samplers.put(name, currentSamplerId++);
         return this;
     }
 
     @Override
     public ShaderProgramBuilder sampler(final String name, final IntSupplier textureId) {
-        if (samplers.containsKey(name)) {
-            throw new IllegalArgumentException(String.format("Sampler '%s' is already defined", name));
-        }
+        Requires.that(!samplers.containsKey(name), () -> String.format("Sampler '%s' already exists", name));
         final var id = currentSamplerId++;
         samplers.put(name, id);
         staticSamplers.put(id, textureId);
@@ -186,21 +169,15 @@ public final class DefaultShaderProgramBuilder implements ShaderProgramBuilder {
 
     @Override
     public ShaderProgramBuilder uniform(final String name, final UniformType type) {
-        if (uniforms.containsKey(name)) {
-            throw new IllegalArgumentException(String.format("Uniform '%s' is already defined", name));
-        }
-        if (!type.isSupported()) {
-            throw new IllegalArgumentException("Unsupported uniform type");
-        }
+        Requires.that(!uniforms.containsKey(name), () -> String.format("Uniform '%s' is already defined", name));
+        Requires.that(type.isSupported(), "Unsupported uniform type");
         uniforms.put(name, type.create(name));
         return this;
     }
 
     @Override
     public ShaderProgramBuilder uniforms(final String name, final UniformBuffer buffer) {
-        if (uniformBuffers.containsKey(name)) {
-            throw new IllegalArgumentException(String.format("Uniform block '%s' is already defined", name));
-        }
+        Requires.that(!uniformBuffers.containsKey(name), () -> String.format("Uniform block '%s' is already defined", name));
         uniformBuffers.put(name, buffer);
         return this;
     }

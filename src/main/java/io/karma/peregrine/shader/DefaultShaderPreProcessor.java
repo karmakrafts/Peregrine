@@ -18,6 +18,7 @@ package io.karma.peregrine.shader;
 
 import io.karma.peregrine.Peregrine;
 import io.karma.peregrine.PeregrineMod;
+import io.karma.peregrine.util.Requires;
 import io.karma.peregrine.util.ToBooleanBiFunction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -152,9 +153,7 @@ public final class DefaultShaderPreProcessor implements ShaderPreProcessor {
             else {
                 final var path = matcher.group(4); // Otherwise grab the absolute one
                 targetLocation = ResourceLocation.tryParse(path);
-                if (targetLocation == null) {
-                    throw new IllegalStateException(String.format("Malformed include location '%s'", path));
-                }
+                Requires.that(targetLocation != null, () -> String.format("Malformed include location '%s'", path));
             }
             if (includedLocations.contains(targetLocation)) {
                 return true;
@@ -190,11 +189,8 @@ public final class DefaultShaderPreProcessor implements ShaderPreProcessor {
                 replacement.append(String.format(" = %s", Objects.requireNonNullElse(value, defaultValue)));
             }
             else {
-                if (value == null) {
-                    throw new IllegalStateException(String.format("Value for constant '%s' in object %s not defined",
-                        name,
-                        location));
-                }
+                Requires.that(value != null,
+                    () -> String.format("Value for constant '%s' in object %s not defined", name, location));
                 replacement.append(String.format(" = %s", value));
             }
             replacement.append(';');
@@ -228,9 +224,7 @@ public final class DefaultShaderPreProcessor implements ShaderPreProcessor {
 
         final var glVersion = Objects.requireNonNull(GL11.glGetString(GL11.GL_VERSION));
         final var glVersionMatcher = GL_VERSION_PATTERN.matcher(glVersion);
-        if (!glVersionMatcher.find()) {
-            throw new IllegalStateException("Could not parse OpenGL version");
-        }
+        Requires.that(glVersionMatcher.find(), "Could not parse OpenGL version");
         allDefines.put("BUILTIN_GL_MAJOR", glVersionMatcher.group(1));
         allDefines.put("BUILTIN_GL_MINOR", glVersionMatcher.group(2));
         allDefines.put("BUILTIN_GL_PATCH", glVersionMatcher.group(3));

@@ -24,6 +24,7 @@ import io.karma.peregrine.shader.DefaultShaderProgramBuilder;
 import io.karma.peregrine.shader.ShaderProgram;
 import io.karma.peregrine.shader.ShaderProgramBuilder;
 import io.karma.peregrine.target.RenderTarget;
+import io.karma.peregrine.util.Requires;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderStateShard.EmptyTextureStateShard;
 import net.minecraft.client.renderer.RenderStateShard.TransparencyStateShard;
@@ -84,9 +85,9 @@ public final class DefaultRenderTypeBuilder implements RenderTypeBuilder {
     }
 
     RenderType build() {
-        Preconditions.checkArgument(name != null, "Name must be specified");
-        Preconditions.checkArgument(vertexFormat != null, "Vertex format must be specified");
-        Preconditions.checkArgument(shader != null, "Shader must be specified");
+        Requires.that(name != null, "Name must be specified");
+        Requires.that(vertexFormat != null, "Vertex format must be specified");
+        Requires.that(shader != null, "Shader must be specified");
         // @formatter:off
         return RenderType.create(name, vertexFormat, mode, bufferSize, affectsCrumbling, sorting,
             CompositeState.builder()
@@ -190,7 +191,7 @@ public final class DefaultRenderTypeBuilder implements RenderTypeBuilder {
 
     @Override
     public RenderTypeBuilder bufferSizeInVertices(final int numVertices) {
-        Preconditions.checkArgument(vertexFormat != null, "Vertex format must be specified");
+        Requires.that(vertexFormat != null, "Vertex format must be specified");
         bufferSize = numVertices * vertexFormat.getVertexSize();
         return this;
     }

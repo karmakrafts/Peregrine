@@ -16,8 +16,8 @@
 
 package io.karma.peregrine.shader;
 
-import com.google.common.base.Preconditions;
 import io.karma.peregrine.PeregrineMod;
+import io.karma.peregrine.util.Requires;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -57,8 +57,8 @@ public final class DefaultShaderObjectBuilder implements ShaderObjectBuilder {
     }
 
     DefaultShaderObject build() {
-        Preconditions.checkArgument(type != null, "Type of the shader must be specified");
-        Preconditions.checkArgument(location != null, "Location of the shader must be specified");
+        Requires.that(type != null, "Type of the shader must be specified");
+        Requires.that(location != null, "Location of the shader must be specified");
         return new DefaultShaderObject(type, location, shaderPreProcessorSupplier);
     }
 }

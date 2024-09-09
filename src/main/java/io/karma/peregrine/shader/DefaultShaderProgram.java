@@ -27,6 +27,7 @@ import io.karma.peregrine.uniform.DefaultUniformCache;
 import io.karma.peregrine.uniform.Uniform;
 import io.karma.peregrine.uniform.UniformCache;
 import io.karma.peregrine.util.HashUtils;
+import io.karma.peregrine.util.Requires;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.client.Minecraft;
@@ -256,11 +257,9 @@ public final class DefaultShaderProgram extends ShaderStateShard implements Shad
 
     @Override
     public void setSampler(final String name, final int textureId) {
-        final var sampler = getSampler(name);
-        if (!(sampler instanceof DynamicSampler dynamicSampler)) {
-            throw new IllegalArgumentException(String.format("Sampler '%s' is not dynamic", name));
-        }
-        dynamicSampler.setTextureId(() -> textureId);
+        Requires.instanceOf(getSampler(name),
+            DynamicSampler.class,
+            () -> String.format("Sampler '%s' is not dynamic", name)).setTextureId(() -> textureId);
     }
 
     @Override

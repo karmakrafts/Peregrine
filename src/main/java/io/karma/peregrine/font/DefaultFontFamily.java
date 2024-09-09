@@ -19,11 +19,11 @@ package io.karma.peregrine.font;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Preconditions;
 import io.karma.peregrine.Peregrine;
 import io.karma.peregrine.PeregrineMod;
 import io.karma.peregrine.reload.ReloadPriority;
 import io.karma.peregrine.reload.Reloadable;
+import io.karma.peregrine.util.Requires;
 import it.unimi.dsi.fastutil.objects.Object2FloatMap;
 import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap;
 import net.minecraft.resources.ResourceLocation;
@@ -70,11 +70,10 @@ public final class DefaultFontFamily implements FontFamily, Reloadable {
             final var configLocation = new ResourceLocation(name.getNamespace(), configPath);
             Peregrine.LOGGER.debug("Loading font family from {}", configLocation);
             config = Objects.requireNonNull(read(resourceProvider.getResourceOrThrow(configLocation), Config.class));
-            if (config.version < Config.VERSION) {
-                throw new IllegalStateException(String.format("Invalid font config version %d, expected at least %d",
+            Requires.that(config.version >= Config.VERSION,
+                () -> String.format("Invalid font config version %d, expected at least %d",
                     config.version,
                     Config.VERSION));
-            }
             styles.clear();
             styles.addAll(config.variants.keySet());
             for (final var style : styles) {
@@ -127,16 +126,12 @@ public final class DefaultFontFamily implements FontFamily, Reloadable {
 
     @Override
     public synchronized FontVariant getFont(final FontStyle style, final float size) {
-        if (size < 0F) {
-            throw new IllegalArgumentException("Size must be greater than or equal to zero");
-        }
+        Requires.that(size > 0F, "Size must be greater than or equal to zero");
         return new DefaultFontVariant(fonts.computeIfAbsent(style, s -> {
             final var variant = config.variants.get(s);
             final var locationString = variant.location;
             final var location = ResourceLocation.tryParse(locationString);
-            if (location == null) {
-                throw new IllegalStateException(String.format("Malformed font location: %s", locationString));
-            }
+            Requires.that(location != null, () -> String.format("Malformed font location: %s", locationString));
             final var font = new DefaultFont(this, config.supportedCharSet, location);
             font.setVariationAxes(variant.variationAxes);
             return font;
@@ -147,16 +142,14 @@ public final class DefaultFontFamily implements FontFamily, Reloadable {
     public synchronized FontVariant getFont(final FontStyle style,
                                             final float size,
                                             final Object2FloatMap<String> variationAxes) {
-        Preconditions.checkArgument(size > 0F, "Size must be greater than zero");
+        Requires.that(size > 0F, "Size must be greater than zero");
         return new DefaultFontVariant(fonts.computeIfAbsent(style, s -> {
             final var variant = config.variants.get(s);
             final var locationString = variant.location;
             final var location = ResourceLocation.tryParse(locationString);
-            if (location == null) {
-                throw new IllegalStateException(String.format("Malformed font location: %s", locationString));
-            }
+            Requires.that(location != null, () -> String.format("Malformed font location: %s", locationString));
             final var font = new DefaultFont(this, config.supportedCharSet, location);
-            font.setVariationAxes(variant.variationAxes);
+            font.setVariationAxes(variationAxes);
             return font;
         }), style, size); // TODO: finish implementing this
     }

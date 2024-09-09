@@ -17,6 +17,7 @@
 package io.karma.peregrine.font;
 
 import io.karma.peregrine.Peregrine;
+import io.karma.peregrine.util.Requires;
 import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -132,9 +133,7 @@ public final class MSDFUtils {
                                          final BufferedImage image,
                                          final int dstX,
                                          final int dstY) {
-        if (image.getType() != BufferedImage.TYPE_INT_ARGB) {
-            throw new IllegalArgumentException("Invalid target image format");
-        }
+        Requires.that(image.getType() == BufferedImage.TYPE_INT_ARGB, "Invalid target image format");
         try (final var stack = MemoryStack.stackPush()) {
             final var width = bitmap.width();
             final var height = bitmap.height();

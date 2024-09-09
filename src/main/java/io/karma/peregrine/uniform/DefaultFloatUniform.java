@@ -20,6 +20,7 @@ import io.karma.peregrine.shader.ShaderProgram;
 import io.karma.peregrine.uniform.ScalarUniform.FloatUniform;
 import io.karma.peregrine.util.HashUtils;
 import io.karma.peregrine.util.MathUtils;
+import io.karma.peregrine.util.Requires;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.opengl.GL20;
@@ -35,10 +36,7 @@ public final class DefaultFloatUniform extends AbstractUniform<Float> implements
 
     DefaultFloatUniform(final String name, final Object defaultValue) {
         super(name);
-        if (!(defaultValue instanceof Number number)) {
-            throw new IllegalArgumentException("Default value is not a float");
-        }
-        value = number.floatValue();
+        value = Requires.instanceOf(defaultValue, Number.class, "Default value is not a number").floatValue();
     }
 
     @Override
