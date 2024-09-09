@@ -16,9 +16,11 @@
 
 package io.karma.peregrine.uniform;
 
-import io.karma.peregrine.buffer.UniformBuffer;
-import io.karma.peregrine.shader.ShaderProgram;
-import io.karma.peregrine.util.HashUtils;
+import io.karma.peregrine.api.buffer.UniformBuffer;
+import io.karma.peregrine.api.shader.ShaderProgram;
+import io.karma.peregrine.api.uniform.Uniform;
+import io.karma.peregrine.api.uniform.UniformCache;
+import io.karma.peregrine.api.util.HashUtils;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.opengl.GL15;

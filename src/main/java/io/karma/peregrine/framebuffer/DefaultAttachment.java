@@ -16,6 +16,12 @@
 
 package io.karma.peregrine.framebuffer;
 
+import io.karma.peregrine.api.framebuffer.Attachment;
+import io.karma.peregrine.api.framebuffer.AttachmentType;
+import io.karma.peregrine.api.texture.DynamicTexture;
+import io.karma.peregrine.api.texture.TextureFilter;
+import io.karma.peregrine.api.texture.TextureFormat;
+import io.karma.peregrine.api.texture.TextureWrapMode;
 import io.karma.peregrine.texture.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;

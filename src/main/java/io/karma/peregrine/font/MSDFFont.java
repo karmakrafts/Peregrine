@@ -16,9 +16,10 @@
 
 package io.karma.peregrine.font;
 
-import io.karma.peregrine.Peregrine;
-import io.karma.peregrine.util.MemoryUtils;
-import io.karma.peregrine.util.Requires;
+import io.karma.peregrine.api.Peregrine;
+import io.karma.peregrine.api.font.FontVariationAxis;
+import io.karma.peregrine.api.util.MemoryUtils;
+import io.karma.peregrine.api.util.Requires;
 import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;

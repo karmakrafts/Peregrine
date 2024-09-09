@@ -16,14 +16,16 @@
 
 package io.karma.peregrine.shader;
 
-import io.karma.peregrine.Peregrine;
+import io.karma.peregrine.api.Peregrine;
 import io.karma.peregrine.PeregrineMod;
-import io.karma.peregrine.dispose.Disposable;
-import io.karma.peregrine.dispose.DisposePriority;
-import io.karma.peregrine.reload.PreparePriority;
-import io.karma.peregrine.reload.ReloadPriority;
-import io.karma.peregrine.reload.Reloadable;
-import io.karma.peregrine.texture.Texture;
+import io.karma.peregrine.api.dispose.Disposable;
+import io.karma.peregrine.api.dispose.DisposePriority;
+import io.karma.peregrine.api.reload.PreparePriority;
+import io.karma.peregrine.api.reload.ReloadPriority;
+import io.karma.peregrine.api.reload.Reloadable;
+import io.karma.peregrine.api.shader.Sampler;
+import io.karma.peregrine.api.shader.ShaderProgram;
+import io.karma.peregrine.api.texture.Texture;
 import net.minecraft.server.packs.resources.ResourceProvider;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;

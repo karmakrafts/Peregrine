@@ -18,8 +18,8 @@ package io.karma.peregrine.hooks;
 
 import com.mojang.blaze3d.shaders.Program;
 import com.mojang.blaze3d.shaders.Shader;
-import io.karma.peregrine.shader.ShaderObject;
-import io.karma.peregrine.shader.ShaderType;
+import io.karma.peregrine.api.shader.ShaderObject;
+import io.karma.peregrine.api.shader.ShaderType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;

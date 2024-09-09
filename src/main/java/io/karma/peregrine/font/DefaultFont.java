@@ -16,6 +16,7 @@
 
 package io.karma.peregrine.font;
 
+import io.karma.peregrine.api.font.*;
 import it.unimi.dsi.fastutil.objects.Object2FloatMap;
 import it.unimi.dsi.fastutil.objects.Object2FloatMaps;
 import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap;

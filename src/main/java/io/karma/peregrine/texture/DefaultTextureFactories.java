@@ -16,7 +16,8 @@
 
 package io.karma.peregrine.texture;
 
-import io.karma.peregrine.util.HashUtils;
+import io.karma.peregrine.api.texture.*;
+import io.karma.peregrine.api.util.HashUtils;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;

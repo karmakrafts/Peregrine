@@ -16,6 +16,7 @@
 
 package io.karma.peregrine.target;
 
+import io.karma.peregrine.api.target.RenderTarget;
 import net.minecraft.client.renderer.RenderStateShard.OutputStateShard;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;

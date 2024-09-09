@@ -17,17 +17,18 @@
 package io.karma.peregrine.shader;
 
 import com.mojang.blaze3d.vertex.VertexFormat;
-import io.karma.peregrine.Peregrine;
+import io.karma.peregrine.api.Peregrine;
 import io.karma.peregrine.PeregrineMod;
-import io.karma.peregrine.buffer.UniformBuffer;
+import io.karma.peregrine.api.buffer.UniformBuffer;
+import io.karma.peregrine.api.shader.*;
 import io.karma.peregrine.hooks.PeregrineRenderSystem;
 import io.karma.peregrine.hooks.PeregrineShaderAdaptor;
-import io.karma.peregrine.reload.Reloadable;
+import io.karma.peregrine.api.reload.Reloadable;
 import io.karma.peregrine.uniform.DefaultUniformCache;
-import io.karma.peregrine.uniform.Uniform;
-import io.karma.peregrine.uniform.UniformCache;
-import io.karma.peregrine.util.HashUtils;
-import io.karma.peregrine.util.Requires;
+import io.karma.peregrine.api.uniform.Uniform;
+import io.karma.peregrine.api.uniform.UniformCache;
+import io.karma.peregrine.api.util.HashUtils;
+import io.karma.peregrine.api.util.Requires;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.client.Minecraft;

@@ -18,7 +18,9 @@ package io.karma.peregrine.state;
 
 import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
 import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
-import io.karma.peregrine.util.Requires;
+import io.karma.peregrine.api.state.BlendMode;
+import io.karma.peregrine.api.state.BlendModeBuilder;
+import io.karma.peregrine.api.util.Requires;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 

@@ -16,12 +16,13 @@
 
 package io.karma.peregrine.uniform;
 
-import io.karma.peregrine.uniform.MatrixUniform.*;
-import io.karma.peregrine.uniform.ScalarUniform.DoubleUniform;
-import io.karma.peregrine.uniform.ScalarUniform.FloatUniform;
-import io.karma.peregrine.uniform.ScalarUniform.IntUniform;
-import io.karma.peregrine.uniform.ScalarUniform.LongUniform;
-import io.karma.peregrine.uniform.VectorUniform.*;
+import io.karma.peregrine.api.uniform.MatrixUniform.*;
+import io.karma.peregrine.api.uniform.ScalarUniform.DoubleUniform;
+import io.karma.peregrine.api.uniform.ScalarUniform.FloatUniform;
+import io.karma.peregrine.api.uniform.ScalarUniform.IntUniform;
+import io.karma.peregrine.api.uniform.ScalarUniform.LongUniform;
+import io.karma.peregrine.api.uniform.UniformTypeFactories;
+import io.karma.peregrine.api.uniform.VectorUniform.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 

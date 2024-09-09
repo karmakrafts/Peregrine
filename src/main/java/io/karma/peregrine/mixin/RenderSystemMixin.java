@@ -18,7 +18,7 @@ package io.karma.peregrine.mixin;
 
 import com.mojang.blaze3d.pipeline.RenderCall;
 import com.mojang.blaze3d.systems.RenderSystem;
-import io.karma.peregrine.Peregrine;
+import io.karma.peregrine.api.Peregrine;
 import io.karma.peregrine.hooks.PeregrineRenderSystem;
 import io.karma.peregrine.hooks.PeregrineShader;
 import net.minecraft.client.renderer.ShaderInstance;

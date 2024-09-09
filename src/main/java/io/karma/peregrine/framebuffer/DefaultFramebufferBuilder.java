@@ -16,8 +16,8 @@
 
 package io.karma.peregrine.framebuffer;
 
-import com.google.common.base.Preconditions;
-import io.karma.peregrine.util.Requires;
+import io.karma.peregrine.api.framebuffer.*;
+import io.karma.peregrine.api.util.Requires;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 

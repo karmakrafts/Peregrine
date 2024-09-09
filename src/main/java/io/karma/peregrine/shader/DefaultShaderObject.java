@@ -18,8 +18,12 @@ package io.karma.peregrine.shader;
 
 import com.mojang.blaze3d.shaders.Program;
 import com.mojang.blaze3d.shaders.Shader;
-import io.karma.peregrine.Peregrine;
-import io.karma.peregrine.util.HashUtils;
+import io.karma.peregrine.api.Peregrine;
+import io.karma.peregrine.api.shader.ShaderObject;
+import io.karma.peregrine.api.shader.ShaderPreProcessor;
+import io.karma.peregrine.api.shader.ShaderProgram;
+import io.karma.peregrine.api.shader.ShaderType;
+import io.karma.peregrine.api.util.HashUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceProvider;
 import net.minecraftforge.api.distmarker.Dist;

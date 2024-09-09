@@ -16,8 +16,11 @@
 
 package io.karma.peregrine.framebuffer;
 
-import io.karma.peregrine.Peregrine;
+import io.karma.peregrine.api.Peregrine;
 import io.karma.peregrine.PeregrineMod;
+import io.karma.peregrine.api.framebuffer.Attachment;
+import io.karma.peregrine.api.framebuffer.AttachmentType;
+import io.karma.peregrine.api.framebuffer.Framebuffer;
 import net.minecraft.client.renderer.RenderStateShard.OutputStateShard;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;

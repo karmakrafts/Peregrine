@@ -16,10 +16,14 @@
 
 package io.karma.peregrine.shader;
 
-import io.karma.peregrine.Peregrine;
+import io.karma.peregrine.api.Peregrine;
 import io.karma.peregrine.PeregrineMod;
-import io.karma.peregrine.util.Requires;
-import io.karma.peregrine.util.ToBooleanBiFunction;
+import io.karma.peregrine.api.shader.ShaderObject;
+import io.karma.peregrine.api.shader.ShaderPreProcessor;
+import io.karma.peregrine.api.shader.ShaderProgram;
+import io.karma.peregrine.api.shader.ShaderType;
+import io.karma.peregrine.api.util.Requires;
+import io.karma.peregrine.api.util.ToBooleanBiFunction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;

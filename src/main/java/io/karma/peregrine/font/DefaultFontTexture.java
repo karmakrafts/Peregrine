@@ -16,10 +16,18 @@
 
 package io.karma.peregrine.font;
 
-import io.karma.peregrine.Peregrine;
+import io.karma.peregrine.api.Peregrine;
 import io.karma.peregrine.PeregrineMod;
+import io.karma.peregrine.api.font.Font;
+import io.karma.peregrine.api.font.FontTexture;
+import io.karma.peregrine.api.font.FontVariant;
+import io.karma.peregrine.api.font.GlyphSprite;
+import io.karma.peregrine.api.texture.TextureFilter;
+import io.karma.peregrine.api.texture.TextureFormat;
+import io.karma.peregrine.api.texture.TextureUtils;
+import io.karma.peregrine.api.texture.TextureWrapMode;
 import io.karma.peregrine.texture.*;
-import io.karma.peregrine.util.Requires;
+import io.karma.peregrine.api.util.Requires;
 import it.unimi.dsi.fastutil.chars.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceProvider;

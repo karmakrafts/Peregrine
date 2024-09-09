@@ -16,11 +16,12 @@
 
 package io.karma.peregrine.framebuffer;
 
-import com.google.common.base.Preconditions;
-import io.karma.peregrine.texture.TextureFilter;
-import io.karma.peregrine.texture.TextureFormat;
-import io.karma.peregrine.texture.TextureWrapMode;
-import io.karma.peregrine.util.Requires;
+import io.karma.peregrine.api.framebuffer.AttachmentBuilder;
+import io.karma.peregrine.api.framebuffer.AttachmentType;
+import io.karma.peregrine.api.texture.TextureFilter;
+import io.karma.peregrine.api.texture.TextureFormat;
+import io.karma.peregrine.api.texture.TextureWrapMode;
+import io.karma.peregrine.api.util.Requires;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 

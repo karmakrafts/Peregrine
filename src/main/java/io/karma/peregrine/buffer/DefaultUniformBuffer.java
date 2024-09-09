@@ -16,12 +16,13 @@
 
 package io.karma.peregrine.buffer;
 
-import io.karma.peregrine.Peregrine;
+import io.karma.peregrine.api.Peregrine;
 import io.karma.peregrine.PeregrineMod;
-import io.karma.peregrine.shader.ShaderProgram;
+import io.karma.peregrine.api.buffer.UniformBuffer;
+import io.karma.peregrine.api.shader.ShaderProgram;
 import io.karma.peregrine.uniform.DefaultUniformCache;
-import io.karma.peregrine.uniform.Uniform;
-import io.karma.peregrine.uniform.UniformCache;
+import io.karma.peregrine.api.uniform.Uniform;
+import io.karma.peregrine.api.uniform.UniformCache;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;

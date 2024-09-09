@@ -18,7 +18,7 @@ package io.karma.peregrine.mixin;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import io.karma.peregrine.PeregrineMod;
-import io.karma.peregrine.event.ItemRenderEvent;
+import io.karma.peregrine.api.event.ItemRenderEvent;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.resources.model.BakedModel;

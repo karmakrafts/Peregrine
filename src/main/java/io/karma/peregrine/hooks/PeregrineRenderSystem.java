@@ -17,7 +17,7 @@
 package io.karma.peregrine.hooks;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import io.karma.peregrine.Peregrine;
+import io.karma.peregrine.api.Peregrine;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.Lazy;

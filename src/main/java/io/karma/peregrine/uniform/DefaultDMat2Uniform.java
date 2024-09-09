@@ -16,9 +16,9 @@
 
 package io.karma.peregrine.uniform;
 
-import io.karma.peregrine.shader.ShaderProgram;
-import io.karma.peregrine.uniform.MatrixUniform.DMat2Uniform;
-import io.karma.peregrine.util.Requires;
+import io.karma.peregrine.api.shader.ShaderProgram;
+import io.karma.peregrine.api.uniform.MatrixUniform.DMat2Uniform;
+import io.karma.peregrine.api.util.Requires;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Matrix2d;

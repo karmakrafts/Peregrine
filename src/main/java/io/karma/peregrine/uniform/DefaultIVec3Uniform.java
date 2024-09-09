@@ -16,12 +16,11 @@
 
 package io.karma.peregrine.uniform;
 
-import io.karma.peregrine.shader.ShaderProgram;
-import io.karma.peregrine.uniform.VectorUniform.IVec3Uniform;
-import io.karma.peregrine.util.Requires;
+import io.karma.peregrine.api.shader.ShaderProgram;
+import io.karma.peregrine.api.uniform.VectorUniform.IVec3Uniform;
+import io.karma.peregrine.api.util.Requires;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.joml.Vector2ic;
 import org.joml.Vector3i;
 import org.joml.Vector3ic;
 import org.lwjgl.opengl.GL20;

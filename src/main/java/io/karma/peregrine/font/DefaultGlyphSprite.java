@@ -16,6 +16,8 @@
 
 package io.karma.peregrine.font;
 
+import io.karma.peregrine.api.font.GlyphMetrics;
+import io.karma.peregrine.api.font.GlyphSprite;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 

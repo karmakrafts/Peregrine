@@ -16,7 +16,9 @@
 
 package io.karma.peregrine.shader;
 
-import io.karma.peregrine.Peregrine;
+import io.karma.peregrine.api.Peregrine;
+import io.karma.peregrine.api.shader.Sampler;
+import io.karma.peregrine.api.shader.ShaderProgram;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.opengl.GL11;

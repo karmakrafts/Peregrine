@@ -16,6 +16,8 @@
 
 package io.karma.peregrine.target;
 
+import io.karma.peregrine.api.target.RenderTarget;
+import io.karma.peregrine.api.target.RenderTargetFactories;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.client.renderer.RenderStateShard.OutputStateShard;
 import net.minecraft.client.renderer.RenderType;

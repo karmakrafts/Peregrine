@@ -16,6 +16,7 @@
 
 package io.karma.peregrine.uniform;
 
+import io.karma.peregrine.api.uniform.Uniform;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 

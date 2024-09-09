@@ -16,8 +16,11 @@
 
 package io.karma.peregrine.shader;
 
-import io.karma.peregrine.Peregrine;
-import io.karma.peregrine.util.HashUtils;
+import io.karma.peregrine.api.Peregrine;
+import io.karma.peregrine.api.shader.ShaderLoader;
+import io.karma.peregrine.api.shader.ShaderObject;
+import io.karma.peregrine.api.shader.ShaderProgram;
+import io.karma.peregrine.api.util.HashUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceProvider;
 import net.minecraftforge.api.distmarker.Dist;

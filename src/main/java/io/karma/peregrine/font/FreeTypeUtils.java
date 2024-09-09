@@ -16,6 +16,7 @@
 
 package io.karma.peregrine.font;
 
+import io.karma.peregrine.api.font.FontVariationAxis;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.system.Checks;

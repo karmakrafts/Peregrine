@@ -17,7 +17,8 @@
 package io.karma.peregrine.texture;
 
 import io.karma.peregrine.PeregrineMod;
-import io.karma.peregrine.state.DSA;
+import io.karma.peregrine.api.state.DSA;
+import io.karma.peregrine.api.texture.*;
 import net.minecraft.server.packs.resources.ResourceProvider;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;

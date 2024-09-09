@@ -16,6 +16,7 @@
 
 package io.karma.peregrine.font;
 
+import io.karma.peregrine.api.font.FontCharSet;
 import it.unimi.dsi.fastutil.ints.IntIntPair;
 
 /**

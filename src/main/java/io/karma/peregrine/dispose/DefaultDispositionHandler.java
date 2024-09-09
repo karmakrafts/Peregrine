@@ -17,7 +17,9 @@
 package io.karma.peregrine.dispose;
 
 import io.karma.peregrine.PeregrineMod;
-import io.karma.peregrine.util.Dispatcher;
+import io.karma.peregrine.api.dispose.Disposable;
+import io.karma.peregrine.api.dispose.DispositionHandler;
+import io.karma.peregrine.api.util.Dispatcher;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
