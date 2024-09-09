@@ -16,7 +16,6 @@
 
 package io.karma.peregrine.state;
 
-import com.google.common.base.Preconditions;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat.Mode;
 import io.karma.peregrine.PeregrineMod;
@@ -26,7 +25,9 @@ import io.karma.peregrine.shader.ShaderProgramBuilder;
 import io.karma.peregrine.target.RenderTarget;
 import io.karma.peregrine.util.Requires;
 import net.minecraft.client.renderer.RenderStateShard;
+import net.minecraft.client.renderer.RenderStateShard.DepthTestStateShard;
 import net.minecraft.client.renderer.RenderStateShard.EmptyTextureStateShard;
+import net.minecraft.client.renderer.RenderStateShard.LayeringStateShard;
 import net.minecraft.client.renderer.RenderStateShard.TransparencyStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderType.CompositeState;
@@ -53,6 +54,8 @@ public final class DefaultRenderTypeBuilder implements RenderTypeBuilder {
     private RenderTarget target = PeregrineMod.RENDER_TARGET_FACTORIES.getMainTarget();
     private ShaderProgram shader;
     private BlendMode blendMode = Transparency.NONE;
+    private Layering layering = Layering.NONE;
+    private DepthTest depthTest = DepthTest.LEQUAL;
     private boolean affectsCrumbling;
     private boolean sorting;
     private boolean outline;
@@ -84,6 +87,23 @@ public final class DefaultRenderTypeBuilder implements RenderTypeBuilder {
         }, () -> GL11.glDisable(GL11.GL_BLEND));
     }
 
+    private static LayeringStateShard getLayeringState(final Layering layering) {
+        return switch (layering) {
+            case VIEW_OFFSET -> RenderStateShard.VIEW_OFFSET_Z_LAYERING;
+            case POLYGON_OFFSET -> RenderStateShard.POLYGON_OFFSET_LAYERING;
+            default -> RenderStateShard.NO_LAYERING;
+        };
+    }
+
+    private static DepthTestStateShard getDepthTestState(final DepthTest depthTest) {
+        return switch (depthTest) {
+            case EQUAL -> RenderStateShard.EQUAL_DEPTH_TEST;
+            case LEQUAL -> RenderStateShard.LEQUAL_DEPTH_TEST;
+            case GREATER -> RenderStateShard.GREATER_DEPTH_TEST;
+            default -> RenderStateShard.NO_DEPTH_TEST;
+        };
+    }
+
     RenderType build() {
         Requires.that(name != null, "Name must be specified");
         Requires.that(vertexFormat != null, "Vertex format must be specified");
@@ -97,12 +117,26 @@ public final class DefaultRenderTypeBuilder implements RenderTypeBuilder {
                 .setLightmapState(lightmap ? RenderStateShard.LIGHTMAP : RenderStateShard.NO_LIGHTMAP)
                 .setOverlayState(overlay ? RenderStateShard.OVERLAY : RenderStateShard.NO_OVERLAY)
                 .setTransparencyState(getTransparencyState(blendMode))
+                .setLayeringState(getLayeringState(layering))
+                .setDepthTestState(getDepthTestState(depthTest))
                 .setTexturingState(RenderStateShard.DEFAULT_TEXTURING)
                 .setWriteMaskState(RenderStateShard.COLOR_DEPTH_WRITE)
                 .setTextureState(new EmptyTextureStateShard(onPreRender, onPostRender))
                 .createCompositeState(outline)
         );
         // @formatter:on
+    }
+
+    @Override
+    public RenderTypeBuilder depthTest(final DepthTest depthTest) {
+        this.depthTest = depthTest;
+        return this;
+    }
+
+    @Override
+    public RenderTypeBuilder layering(final Layering layering) {
+        this.layering = layering;
+        return this;
     }
 
     @Override

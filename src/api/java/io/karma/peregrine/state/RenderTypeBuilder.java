@@ -62,6 +62,10 @@ public interface RenderTypeBuilder {
 
     RenderTypeBuilder outline(final boolean outline);
 
+    RenderTypeBuilder layering(final Layering layering);
+
+    RenderTypeBuilder depthTest(final DepthTest depthTest);
+
     RenderTypeBuilder onPreRender(final RenderCallback callback);
 
     RenderTypeBuilder onPostRender(final RenderCallback callback);
