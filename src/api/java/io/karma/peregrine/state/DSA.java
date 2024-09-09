@@ -14,8 +14,9 @@
  *  limitations under the License.
  */
 
-package io.karma.peregrine.util;
+package io.karma.peregrine.state;
 
+import io.karma.peregrine.util.IntBiConsumer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.opengl.ARBDirectStateAccess;
