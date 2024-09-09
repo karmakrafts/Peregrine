@@ -16,6 +16,7 @@
 
 package io.karma.peregrine.font;
 
+import io.karma.peregrine.Peregrine;
 import io.karma.peregrine.color.ColorProvider;
 import io.karma.peregrine.target.RenderTarget;
 import net.minecraftforge.api.distmarker.Dist;
@@ -29,6 +30,10 @@ import java.util.function.IntFunction;
  */
 @OnlyIn(Dist.CLIENT)
 public interface FontRenderer {
+    static FontRenderer create(final RenderTarget renderTarget) {
+        return Peregrine.getFontRendererFactory().apply(renderTarget);
+    }
+
     RenderTarget getRenderTarget();
 
     int getLineHeight(final Font font);

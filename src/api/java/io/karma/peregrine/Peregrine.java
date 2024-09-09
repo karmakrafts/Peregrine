@@ -22,6 +22,7 @@ import io.karma.peregrine.buffer.UniformBufferProvider;
 import io.karma.peregrine.dispose.DispositionHandler;
 import io.karma.peregrine.font.FontFamily;
 import io.karma.peregrine.font.FontFamilyFactory;
+import io.karma.peregrine.font.FontRendererFactory;
 import io.karma.peregrine.framebuffer.Framebuffer;
 import io.karma.peregrine.framebuffer.FramebufferFactory;
 import io.karma.peregrine.reload.ReloadHandler;
@@ -101,6 +102,8 @@ public final class Peregrine {
     private static RenderTypeFactory renderTypeFactory;
     @OnlyIn(Dist.CLIENT)
     private static BlendModeFactory blendModeFactory;
+    @OnlyIn(Dist.CLIENT)
+    private static FontRendererFactory fontRendererFactory;
 
     @OnlyIn(Dist.CLIENT)
     private static boolean supportsBindlessTextures;
@@ -227,6 +230,7 @@ public final class Peregrine {
             renderTargetFactories = di.getSafe(RenderTargetFactories.class);
             renderTypeFactory = di.getSafe(RenderTypeFactory.class);
             blendModeFactory = di.getSafe(BlendModeFactory.class);
+            fontRendererFactory = di.getSafe(FontRendererFactory.class);
             shaderBinaryFormat = di.getSafe(ShaderBinaryFormat.class);
 
             if (shaderBinaryFormat.isValid()) {
@@ -461,6 +465,13 @@ public final class Peregrine {
     public static BlendModeFactory getBlendModeFactory() {
         ensureInitialized();
         return blendModeFactory;
+    }
+
+    // TODO: document this
+    @OnlyIn(Dist.CLIENT)
+    public static FontRendererFactory getFontRendererFactory() {
+        ensureInitialized();
+        return fontRendererFactory;
     }
 
     /**

@@ -24,7 +24,9 @@ import io.karma.peregrine.buffer.UniformBufferFactory;
 import io.karma.peregrine.buffer.UniformBufferProvider;
 import io.karma.peregrine.dispose.DefaultDispositionHandler;
 import io.karma.peregrine.font.DefaultFontFamily;
+import io.karma.peregrine.font.DefaultFontRenderer;
 import io.karma.peregrine.font.FontFamilyFactory;
+import io.karma.peregrine.font.FontRendererFactory;
 import io.karma.peregrine.framebuffer.DefaultFramebufferBuilder;
 import io.karma.peregrine.framebuffer.FramebufferFactory;
 import io.karma.peregrine.reload.DefaultReloadHandler;
@@ -170,6 +172,7 @@ public final class PeregrineMod {
                 di.put(FramebufferFactory.class, DefaultFramebufferBuilder::build);
                 di.put(RenderTypeFactory.class, DefaultRenderTypeBuilder::build);
                 di.put(BlendModeFactory.class, DefaultBlendModeBuilder::build);
+                di.put(FontRendererFactory.class, DefaultFontRenderer::new);
                 di.put(ShaderLoaderProvider.class, SHADER_LOADER::get);
                 di.put(UniformBufferProvider.class, GLOBAL_UNIFORMS::get);
                 di.put(ShaderPreProcessorProvider.class, () -> SHADER_PRE_PROCESSOR);
