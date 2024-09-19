@@ -77,4 +77,17 @@ public final class DefaultDMat2Uniform extends AbstractUniform<Matrix2d> impleme
     public Matrix2d get() {
         return value;
     }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if(!(obj instanceof DMat2Uniform other)) {
+            return false;
+        }
+        return value.equals(other.get());
+    }
+
+    @Override
+    public String toString() {
+        return String.format("DefaultDMat2Uniform[name=%s,value=%s]", name, value);
+    }
 }

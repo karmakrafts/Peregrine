@@ -71,7 +71,15 @@ public final class DefaultIntUniform extends AbstractUniform<Integer> implements
     }
 
     @Override
-    public int hashCode() {
-        return HashUtils.combine(name.hashCode(), getType().getHash());
+    public boolean equals(final Object obj) {
+        if(!(obj instanceof IntUniform other)) {
+            return false;
+        }
+        return value == other.get();
+    }
+
+    @Override
+    public String toString() {
+        return String.format("DefaultIntUniform[name=%s,value=%d]", name, value);
     }
 }

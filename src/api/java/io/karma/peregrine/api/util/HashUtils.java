@@ -38,28 +38,28 @@ public final class HashUtils {
         return 31 * hash1 + hash2;
     }
 
-    public static int combine(final int hash1, final int hash2, final int hash3, final int... hashes) {
+    public static int combineMany(final int... hashes) {
         var hash = hashes[0];
         for (var i = 0; i < hashes.length - 1; i++) {
             hash = combine(hash, hashes[i + 1]);
         }
-        return combine(hash1, combine(hash2, combine(hash3, hash)));
+        return hash;
     }
 
     public static int hash(final Collection<?> objects) {
-        var hash = 0;
-        for (final var object : objects) {
-            hash = combine(object.hashCode(), hash);
+        if (objects.isEmpty()) {
+            return objects.hashCode();
+        }
+        final var indexedObjects = objects.toArray(Object[]::new);
+        var hash = indexedObjects[0].hashCode();
+        for (var i = 0; i < indexedObjects.length - 1; i++) {
+            hash = combine(hash, indexedObjects[i + 1].hashCode());
         }
         return hash;
     }
 
     public static int hash(final Map<?, ?> map) {
         return combine(hash(map.keySet()), hash(map.values()));
-    }
-
-    public static int hashValuesAsStrings(final Map<?, ?> map) {
-        return combine(hash(map.keySet()), hash(map.values().stream().map(Object::toString).toList()));
     }
 
     public static @Nullable String toFingerprint(final int hash) {

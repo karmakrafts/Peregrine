@@ -17,6 +17,7 @@
 package io.karma.peregrine.api.uniform;
 
 import io.karma.peregrine.api.Peregrine;
+import io.karma.peregrine.api.util.HashUtils;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -58,7 +59,7 @@ public enum ScalarType implements UniformType {
 
     @Override
     public int getHash() {
-        return name().hashCode();
+        return HashUtils.combine(name().hashCode(), defaultValue.hashCode());
     }
 
     @Override

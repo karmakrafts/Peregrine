@@ -16,12 +16,14 @@
 
 package io.karma.peregrine.framebuffer;
 
-import io.karma.peregrine.api.Peregrine;
 import io.karma.peregrine.PeregrineMod;
+import io.karma.peregrine.api.Peregrine;
 import io.karma.peregrine.api.framebuffer.Attachment;
 import io.karma.peregrine.api.framebuffer.AttachmentType;
 import io.karma.peregrine.api.framebuffer.Framebuffer;
+import io.karma.peregrine.api.reload.Reloadable;
 import net.minecraft.client.renderer.RenderStateShard.OutputStateShard;
+import net.minecraft.server.packs.resources.ResourceProvider;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.Nullable;
@@ -37,7 +39,7 @@ import java.util.function.Consumer;
  * @since 31/08/2024
  */
 @OnlyIn(Dist.CLIENT)
-public final class DefaultFramebuffer implements Framebuffer {
+public final class DefaultFramebuffer implements Framebuffer, Reloadable {
     private final EnumMap<AttachmentType, Attachment> attachments;
     private final Consumer<Framebuffer> bindCallback;
     private final Consumer<Framebuffer> unbindCallback;
@@ -48,6 +50,7 @@ public final class DefaultFramebuffer implements Framebuffer {
     private int previousTexture;
     private int width;
     private int height;
+    private boolean isInitialized;
 
     public DefaultFramebuffer(final int width,
                               final int height,
@@ -58,7 +61,8 @@ public final class DefaultFramebuffer implements Framebuffer {
         this.attachments = attachments;
         this.bindCallback = bindCallback;
         this.unbindCallback = unbindCallback;
-        resize(width, height);
+        this.width = width;
+        this.height = height;
         outputState = new OutputStateShard(toString(), this::bind, this::unbind);
         PeregrineMod.DISPOSE_HANDLER.register(this);
     }
@@ -91,7 +95,7 @@ public final class DefaultFramebuffer implements Framebuffer {
         // Resize attachments
         for (final var attachment : attachments) {
             final var texture = attachment.getTexture();
-            texture.resize(texture.getFormat(), width, height);
+            texture.resize(width, height);
         }
         // Bind attachments to framebuffer object
         bind();
@@ -163,7 +167,15 @@ public final class DefaultFramebuffer implements Framebuffer {
     }
 
     @Override
+    public void reload(final ResourceProvider resourceProvider) {
+        if (!isInitialized) {
+            resize(width, height);
+            isInitialized = true;
+        }
+    }
+
+    @Override
     public String toString() {
-        return String.format("DefaultFramebuffer[id=%d]", id);
+        return String.format("DefaultFramebuffer[id=%d,attachments=%s]", id, attachments.values());
     }
 }

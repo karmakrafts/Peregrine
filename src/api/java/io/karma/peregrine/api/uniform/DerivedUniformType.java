@@ -16,6 +16,7 @@
 
 package io.karma.peregrine.api.uniform;
 
+import io.karma.peregrine.api.util.HashUtils;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -64,17 +65,25 @@ final class DerivedUniformType implements UniformType {
     }
 
     @Override
+    public int getHash() {
+        return HashUtils.combine(delegate.getHash(), defaultValue.hashCode());
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (!(obj instanceof DerivedUniformType other)) {
+            return false;
+        }
+        return delegate.equals(other.delegate) && defaultValue.equals(other.defaultValue);
+    }
+
+    @Override
     public String toString() {
         return String.format("%s(%s)", delegate, defaultValue);
     }
 
     @Override
     public int hashCode() {
-        return delegate.getHash();
-    }
-
-    @Override
-    public int getHash() {
-        return delegate.getHash();
+        return getHash();
     }
 }

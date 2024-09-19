@@ -46,7 +46,7 @@ public final class SimpleTextureFormat implements TextureFormat {
     }
 
     public static SimpleTextureFormat get(final int glType, final int internalGlType, final int glDataType) {
-        return CACHE.computeIfAbsent(HashUtils.combine(Integer.hashCode(glType), internalGlType, glDataType),
+        return CACHE.computeIfAbsent(HashUtils.combineMany(glType, internalGlType, glDataType),
             hash -> new SimpleTextureFormat(glType, internalGlType, glDataType));
     }
 
@@ -77,5 +77,24 @@ public final class SimpleTextureFormat implements TextureFormat {
     @Override
     public int getGLDataType() {
         return glDataType;
+    }
+
+    @Override
+    public int hashCode() {
+        return HashUtils.combine(glType,
+            HashUtils.combine(internalGlType, HashUtils.combine(glDataType, type.ordinal())));
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof SimpleTextureFormat other)) {
+            return false;
+        }
+        return glType == other.glType && internalGlType == other.internalGlType && glDataType == other.glDataType && type == other.type;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("SimpleTextureFormat[glType=0x%s,internalGlType=0x%s,glDataType=0x%s]", Integer.toHexString(glType), Integer.toHexString(internalGlType), Integer.toHexString(glDataType));
     }
 }

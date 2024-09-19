@@ -40,6 +40,7 @@ public interface Texture extends Reloadable, Disposable, IntSupplier {
     /**
      * Creates a new empty texture object with the given properties.
      *
+     * @param format             the format of the newly created texture. See {@link DefaultTextureFormat}.
      * @param minFilter          the minifying texture filter applied to the texture.
      * @param magFilter          the magnifying texture filter applied to the texture.
      * @param horizontalWrapMode the type of wrapping applied to the texture
@@ -48,11 +49,16 @@ public interface Texture extends Reloadable, Disposable, IntSupplier {
      *                           vertically when it is sampled beyond its bounds.
      * @return a new empty texture object with the given properties.
      */
-    static Texture create(final TextureFilter minFilter,
+    static Texture create(final TextureFormat format,
+                          final TextureFilter minFilter,
                           final TextureFilter magFilter,
                           final TextureWrapMode horizontalWrapMode,
                           final TextureWrapMode verticalWrapMode) {
-        return Peregrine.getTextureFactories().create(minFilter, magFilter, horizontalWrapMode, verticalWrapMode);
+        return Peregrine.getTextureFactories().create(format,
+            minFilter,
+            magFilter,
+            horizontalWrapMode,
+            verticalWrapMode);
     }
 
     /**

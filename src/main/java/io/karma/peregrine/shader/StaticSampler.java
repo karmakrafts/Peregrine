@@ -148,6 +148,6 @@ public final class StaticSampler implements Sampler, Reloadable, Disposable {
 
     @Override
     public String toString() {
-        return String.format("StaticSampler[textureId=%d,handle=%d]", textureId.getAsInt(), getHandle());
+        return String.format("StaticSampler[name=%s,textureId=%d,handle=%d]", name, textureId.getAsInt(), getHandle());
     }
 }

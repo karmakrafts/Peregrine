@@ -21,7 +21,8 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import io.karma.peregrine.PeregrineMod;
 import io.karma.peregrine.api.buffer.UniformBuffer;
 import io.karma.peregrine.api.shader.*;
-import io.karma.peregrine.api.texture.Texture;
+import io.karma.peregrine.api.texture.TextureFilter;
+import io.karma.peregrine.api.texture.TextureWrapMode;
 import io.karma.peregrine.api.uniform.Uniform;
 import io.karma.peregrine.api.uniform.UniformType;
 import io.karma.peregrine.api.util.Requires;
@@ -151,7 +152,23 @@ public final class DefaultShaderProgramBuilder implements ShaderProgramBuilder {
 
     @Override
     public ShaderProgramBuilder sampler(final String name, final ResourceLocation location) {
-        return sampler(name, Texture.get(location)::getId);
+        return sampler(name,
+            PeregrineMod.TEXTURE_FACTORIES.get(location,
+                TextureFilter.NEAREST,
+                TextureFilter.NEAREST,
+                TextureWrapMode.CLAMP,
+                TextureWrapMode.CLAMP)::getId);
+    }
+
+    @Override
+    public ShaderProgramBuilder sampler(final String name,
+                                        final ResourceLocation location,
+                                        final TextureFilter minFilter,
+                                        final TextureFilter magFilter,
+                                        final TextureWrapMode horizontalWrapMode,
+                                        final TextureWrapMode verticalWrapMode) {
+        return sampler(name,
+            PeregrineMod.TEXTURE_FACTORIES.get(location, minFilter, magFilter, horizontalWrapMode, verticalWrapMode));
     }
 
     @Override
@@ -178,7 +195,8 @@ public final class DefaultShaderProgramBuilder implements ShaderProgramBuilder {
 
     @Override
     public ShaderProgramBuilder uniforms(final String name, final UniformBuffer buffer) {
-        Requires.that(!uniformBuffers.containsKey(name), () -> String.format("Uniform block '%s' is already defined", name));
+        Requires.that(!uniformBuffers.containsKey(name),
+            () -> String.format("Uniform block '%s' is already defined", name));
         uniformBuffers.put(name, buffer);
         return this;
     }

@@ -20,7 +20,7 @@ import io.karma.peregrine.api.Peregrine;
 import io.karma.peregrine.api.util.HashUtils;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.joml.Vector2f;
+import org.joml.*;
 
 import java.util.function.BiFunction;
 
@@ -32,14 +32,14 @@ import java.util.function.BiFunction;
 public enum VectorType implements UniformType {
     // @formatter:off
     VEC2 (ScalarType.FLOAT,   2, new Vector2f(), Peregrine.getUniformTypeFactories().getVec2()),
-    VEC3 (ScalarType.FLOAT,   3, new Vector2f(), Peregrine.getUniformTypeFactories().getVec3()),
-    VEC4 (ScalarType.FLOAT,   4, new Vector2f(), Peregrine.getUniformTypeFactories().getVec4()),
-    DVEC2(ScalarType.DOUBLE,  2, new Vector2f(), Peregrine.getUniformTypeFactories().getDVec2()),
-    DVEC3(ScalarType.DOUBLE,  3, new Vector2f(), Peregrine.getUniformTypeFactories().getDVec3()),
-    DVEC4(ScalarType.DOUBLE,  4, new Vector2f(), Peregrine.getUniformTypeFactories().getDVec4()),
-    IVEC2(ScalarType.INT,     2, new Vector2f(), Peregrine.getUniformTypeFactories().getIVec2()),
-    IVEC3(ScalarType.INT,     3, new Vector2f(), Peregrine.getUniformTypeFactories().getIVec3()),
-    IVEC4(ScalarType.INT,     4, new Vector2f(), Peregrine.getUniformTypeFactories().getIVec4());
+    VEC3 (ScalarType.FLOAT,   3, new Vector3f(), Peregrine.getUniformTypeFactories().getVec3()),
+    VEC4 (ScalarType.FLOAT,   4, new Vector4f(), Peregrine.getUniformTypeFactories().getVec4()),
+    DVEC2(ScalarType.DOUBLE,  2, new Vector2d(), Peregrine.getUniformTypeFactories().getDVec2()),
+    DVEC3(ScalarType.DOUBLE,  3, new Vector3d(), Peregrine.getUniformTypeFactories().getDVec3()),
+    DVEC4(ScalarType.DOUBLE,  4, new Vector4d(), Peregrine.getUniformTypeFactories().getDVec4()),
+    IVEC2(ScalarType.INT,     2, new Vector2i(), Peregrine.getUniformTypeFactories().getIVec2()),
+    IVEC3(ScalarType.INT,     3, new Vector3i(), Peregrine.getUniformTypeFactories().getIVec3()),
+    IVEC4(ScalarType.INT,     4, new Vector4i(), Peregrine.getUniformTypeFactories().getIVec4());
     // @formatter:on
 
     private final ScalarType type;
@@ -64,7 +64,7 @@ public enum VectorType implements UniformType {
 
     @Override
     public int getHash() {
-        return HashUtils.combine(type.getHash(), count);
+        return HashUtils.combine(type.getHash(), HashUtils.combine(count, defaultValue.hashCode()));
     }
 
     @Override

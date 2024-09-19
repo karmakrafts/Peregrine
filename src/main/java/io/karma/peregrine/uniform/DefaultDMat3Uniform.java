@@ -77,4 +77,17 @@ public final class DefaultDMat3Uniform extends AbstractUniform<Matrix3d> impleme
     public Matrix3d get() {
         return value;
     }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if(!(obj instanceof DMat3Uniform other)) {
+            return false;
+        }
+        return value.equals(other.get());
+    }
+
+    @Override
+    public String toString() {
+        return String.format("DefaultDMat3Uniform[name=%s,value=%s]", name, value);
+    }
 }

@@ -36,7 +36,7 @@ import java.util.function.Consumer;
 public interface RenderTypeBuilder {
     RenderTypeBuilder name(final String name);
 
-    RenderTypeBuilder vertexFormat(final VertexFormat vertexFormat);
+    RenderTypeBuilder format(final VertexFormat vertexFormat);
 
     RenderTypeBuilder mode(final Mode mode);
 

@@ -18,6 +18,8 @@ package io.karma.peregrine.api.shader;
 
 import com.mojang.blaze3d.vertex.VertexFormat;
 import io.karma.peregrine.api.buffer.UniformBuffer;
+import io.karma.peregrine.api.texture.TextureFilter;
+import io.karma.peregrine.api.texture.TextureWrapMode;
 import io.karma.peregrine.api.uniform.MatrixType;
 import io.karma.peregrine.api.uniform.ScalarType;
 import io.karma.peregrine.api.uniform.UniformType;
@@ -144,6 +146,24 @@ public interface ShaderProgramBuilder {
      * @return this builder instance.
      */
     ShaderProgramBuilder sampler(final String name, final ResourceLocation location);
+
+    /**
+     * Specifies a new static sampler made available
+     * to the fragment (pixel) stage of the newly created
+     * shader program.
+     *
+     * @param name     the name of the sampler uniform variable.
+     * @param location the location of the texture to associate
+     *                 with the newly created sampler.
+     * @return this builder instance.
+     */
+    // TODO: fix documentation
+    ShaderProgramBuilder sampler(final String name,
+                                 final ResourceLocation location,
+                                 final TextureFilter minFilter,
+                                 final TextureFilter magFilter,
+                                 final TextureWrapMode horizontalWrapMode,
+                                 final TextureWrapMode verticalWrapMode);
 
     /**
      * Specifies an int specialization constant in the GLSL source

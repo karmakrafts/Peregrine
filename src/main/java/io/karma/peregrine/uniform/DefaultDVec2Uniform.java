@@ -17,6 +17,8 @@
 package io.karma.peregrine.uniform;
 
 import io.karma.peregrine.api.shader.ShaderProgram;
+import io.karma.peregrine.api.uniform.MatrixUniform;
+import io.karma.peregrine.api.uniform.MatrixUniform.DMat2Uniform;
 import io.karma.peregrine.api.uniform.VectorUniform.DVec2Uniform;
 import io.karma.peregrine.api.util.Requires;
 import net.minecraftforge.api.distmarker.Dist;
@@ -70,5 +72,18 @@ public final class DefaultDVec2Uniform extends AbstractUniform<Vector2d> impleme
     @Override
     public Vector2d get() {
         return value;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if(!(obj instanceof DVec2Uniform other)) {
+            return false;
+        }
+        return value.equals(other.get());
+    }
+
+    @Override
+    public String toString() {
+        return String.format("DefaultDVec2Uniform[name=%s,value=%s]", name, value);
     }
 }

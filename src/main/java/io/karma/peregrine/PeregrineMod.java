@@ -263,6 +263,7 @@ public final class PeregrineMod {
     }
 
     private void onGameShutdown(final GameShuttingDownEvent event) {
+        DISPOSE_HANDLER.disposeAll();
         try {
             EXECUTOR_SERVICE.shutdown();
             if (EXECUTOR_SERVICE.awaitTermination(5, TimeUnit.SECONDS)) {

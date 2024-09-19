@@ -33,11 +33,12 @@ public final class DefaultTextureFactories implements TextureFactories {
     private final Int2ObjectOpenHashMap<ProxyTexture> proxyTextures = new Int2ObjectOpenHashMap<>();
 
     @Override
-    public DynamicTexture create(final TextureFilter minFilter,
+    public DynamicTexture create(final TextureFormat format,
+                                 final TextureFilter minFilter,
                                  final TextureFilter magFilter,
                                  final TextureWrapMode horizontalWrapMode,
                                  final TextureWrapMode verticalWrapMode) {
-        return new DefaultDynamicTexture(minFilter, magFilter, horizontalWrapMode, verticalWrapMode);
+        return new DefaultDynamicTexture(format, minFilter, magFilter, horizontalWrapMode, verticalWrapMode);
     }
 
     @Override
@@ -46,7 +47,7 @@ public final class DefaultTextureFactories implements TextureFactories {
                        final TextureFilter magFilter,
                        final TextureWrapMode horizontalWrapMode,
                        final TextureWrapMode verticalWrapMode) {
-        return staticTextures.computeIfAbsent(HashUtils.combine(location.hashCode(),
+        return staticTextures.computeIfAbsent(HashUtils.combineMany(location.hashCode(),
                 minFilter.ordinal(),
                 magFilter.ordinal(),
                 horizontalWrapMode.ordinal(),

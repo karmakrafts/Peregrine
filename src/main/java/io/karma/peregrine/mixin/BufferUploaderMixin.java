@@ -38,7 +38,7 @@ import javax.annotation.Nullable;
 @Mixin(BufferUploader.class)
 public final class BufferUploaderMixin {
     @Shadow
-    private static @Nullable VertexBuffer upload(RenderedBuffer pBuffer) {
+    private static @Nullable VertexBuffer upload(final RenderedBuffer pBuffer) {
         throw new UnsupportedOperationException();
     }
 
@@ -51,10 +51,10 @@ public final class BufferUploaderMixin {
             return;
         }
         final var shader = PeregrineRenderSystem.getInstance().peregrine$getShader();
-        if (shader instanceof ShaderInstance) {
+        if (shader instanceof ShaderInstance shaderInstance) {
             uploadedBuffer.drawWithShader(RenderSystem.getModelViewMatrix(),
                 RenderSystem.getProjectionMatrix(),
-                (ShaderInstance) shader);
+                shaderInstance);
             cbi.cancel();
             return;
         }

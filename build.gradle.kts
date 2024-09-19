@@ -16,6 +16,7 @@
 
 import com.github.jengelman.gradle.plugins.shadow.internal.DependencyFilter
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import net.minecraftforge.gradle.patcher.tasks.ReobfuscateJar
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.dokka.gradle.DokkaTask
 import java.nio.file.Path
@@ -101,6 +102,7 @@ configurations {
 
 repositories {
     mavenCentral()
+    mavenLocal()
     google()
     maven("https://maven.covers1624.net")
     maven("https://thedarkcolour.github.io/KotlinForForge")
@@ -124,7 +126,6 @@ dependencies {
     //implementation(fg.deobf(libs.embeddium.get().toString()))
     //implementation(fg.deobf(libs.oculus.get().toString()))
 
-    coreLibraryConfig(libs.annotations)
     coreLibraryConfig(libs.jackson.core)
     coreLibraryConfig(libs.jackson.annotationns)
     coreLibraryConfig(libs.jackson.databind)
@@ -247,7 +248,6 @@ val jarTask = tasks.getByName<Jar>("jar") {
 }
 
 fun DependencyFilter.includeCoreLibs() {
-    include(dependency(libs.annotations.toShadowInclude()))
     include(dependency(libs.jackson.core.toShadowInclude()))
     include(dependency(libs.jackson.annotationns.toShadowInclude()))
     include(dependency(libs.jackson.databind.toShadowInclude()))
@@ -264,13 +264,11 @@ val shadowJarTask = tasks.getByName<ShadowJar>("shadowJar") {
     from(mainSourceSet.output, apiSourceSet.output)
     archiveClassifier = ""
     manifest.applyCommonManifest()
-    mergeServiceFiles()
     finalizedBy("reobfShadowJar") // Lazy forward dependency
     dependencies {
         includeCoreLibs()
         includeLocalLwjglModule("freetype")
         includeLocalLwjglModule("msdfgen")
-        includeLocalLwjglModule("yoga")
     }
 }
 val reobfShadowJarTask = reobf.create("shadowJar")
@@ -285,12 +283,11 @@ val apiJarTask = tasks.create<ShadowJar>("apiJar") {
     from(apiSourceSet.output)
     archiveClassifier = "api"
     finalizedBy("reobfApiJar") // Lazy forward dependency
-    mergeServiceFiles()
     dependencies {
         includeCoreLibs()
     }
 }
-val reobfApiJarTask = reobf.create("apiJar")
+val reobfApiJarTask = reobf.maybeCreate("apiJar")
 
 val apiSourcesJarTask = tasks.create<Jar>("apiSourcesJar") {
     from(apiSourceSet.allSource)
@@ -314,6 +311,11 @@ artifacts {
 }
 
 tasks {
+    withType<JavaCompile> {
+        sourceCompatibility = "17"
+        targetCompatibility = "17"
+        options.release = 17
+    }
     withType<Jar> {
         duplicatesStrategy = DuplicatesStrategy.INCLUDE
     }
@@ -329,10 +331,9 @@ tasks {
         }
     }
 
-    System.getenv("CI_API_V4_URL")?.let { apiUrl ->
-
-        publishing {
-            repositories {
+    publishing {
+        repositories {
+            System.getenv("CI_API_V4_URL")?.let { apiUrl ->
                 maven {
                     url = uri("${apiUrl.replace("http://", "https://")}/projects/${System.getenv("CI_PROJECT_ID")}/packages/maven")
                     name = "GitLab"
@@ -345,42 +346,42 @@ tasks {
                     }
                 }
             }
+        }
 
-            publications {
-                create<MavenPublication>(modId) {
-                    groupId = project.group as String
-                    artifactId = archiveName
-                    version = project.version as String
+        publications {
+            create<MavenPublication>(modId) {
+                groupId = project.group as String
+                artifactId = archiveName
+                version = project.version as String
 
-                    artifact(jarTask)
-                    artifact(shadowJarTask)
-                    artifact(sourcesJarTask)
-                    artifact(apiJarTask)
-                    artifact(apiSourcesJarTask)
-                    artifact(apiJavadocJarTask)
+                artifact(jarTask)
+                artifact(shadowJarTask)
+                artifact(sourcesJarTask)
+                artifact(apiJarTask)
+                artifact(apiSourcesJarTask)
+                artifact(apiJavadocJarTask)
 
-                    pom {
-                        name = artifactId
-                        url = "https://git.karmakrafts.dev/kk/mc-projects/$modId"
-                        scm {
-                            url = this@pom.url
+                pom {
+                    name = artifactId
+                    url = "https://git.karmakrafts.dev/kk/mc-projects/$modId"
+                    scm {
+                        url = this@pom.url
+                    }
+                    issueManagement {
+                        system = "gitlab"
+                        url = "https://git.karmakrafts.dev/kk/mc-projects/$modId/issues"
+                    }
+                    licenses {
+                        license {
+                            name = license
+                            distribution = "repo"
                         }
-                        issueManagement {
-                            system = "gitlab"
-                            url = "https://git.karmakrafts.dev/kk/mc-projects/$modId/issues"
-                        }
-                        licenses {
-                            license {
-                                name = license
-                                distribution = "repo"
-                            }
-                        }
-                        developers {
-                            developer {
-                                id = "kitsunealex"
-                                name = "KitsuneAlex"
-                                url = "https://git.karmakrafts.dev/KitsuneAlex"
-                            }
+                    }
+                    developers {
+                        developer {
+                            id = "kitsunealex"
+                            name = "KitsuneAlex"
+                            url = "https://git.karmakrafts.dev/KitsuneAlex"
                         }
                     }
                 }

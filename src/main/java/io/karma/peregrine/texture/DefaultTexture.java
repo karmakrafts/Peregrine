@@ -16,9 +16,10 @@
 
 package io.karma.peregrine.texture;
 
-import io.karma.peregrine.api.Peregrine;
 import io.karma.peregrine.PeregrineMod;
+import io.karma.peregrine.api.Peregrine;
 import io.karma.peregrine.api.texture.*;
+import io.karma.peregrine.api.util.TextureUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceProvider;
 import net.minecraftforge.api.distmarker.Dist;
@@ -102,6 +103,9 @@ public final class DefaultTexture implements Texture {
 
     @Override
     public void bind() {
+        if (id == INVALID_ID) {
+            return;
+        }
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
     }
 
@@ -152,7 +156,7 @@ public final class DefaultTexture implements Texture {
 
     @Override
     public String toString() {
-        return String.format("StaticTexture[%s]", location);
+        return String.format("StaticTexture[id=%d,format=%s,location=%s]", id, getFormat(), location);
     }
 
     @Override

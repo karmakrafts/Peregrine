@@ -76,7 +76,7 @@ public final class DefaultFontRenderer implements FontRenderer, Reloadable {
             final var location = ctx.texture.getFont().getLocation();
             return DefaultRenderTypeBuilder.build(it -> it
                 .name(String.format("font_%s_%s", location.getNamespace(), location.getPath().replace('/', '_')))
-                .vertexFormat(DefaultVertexFormat.POSITION_COLOR_TEX)
+                .format(DefaultVertexFormat.POSITION_COLOR_TEX)
                 .mode(Mode.TRIANGLES)
                 .blendMode(Transparency.TRANSPARENCY)
                 .bufferSizeInVertices(1024)

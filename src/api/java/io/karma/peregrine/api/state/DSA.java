@@ -43,7 +43,6 @@ public final class DSA {
     }
 
     public static void texImage2D(final int texture,
-                                  final int level,
                                   final int border,
                                   final int width,
                                   final int height,
@@ -56,11 +55,11 @@ public final class DSA {
             if (data == null) {
                 return;
             }
-            ARBDirectStateAccess.glTextureSubImage2D(texture, level, border, border, width, height, format, type, data);
+            ARBDirectStateAccess.glTextureSubImage2D(texture, 0, border, border, width, height, format, type, data);
             return;
         }
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
-        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, level, internalFormat, width, height, border, format, type, data);
+        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, internalFormat, width, height, border, format, type, data);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
     }
 

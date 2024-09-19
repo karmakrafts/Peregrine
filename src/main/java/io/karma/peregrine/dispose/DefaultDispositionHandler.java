@@ -17,6 +17,7 @@
 package io.karma.peregrine.dispose;
 
 import io.karma.peregrine.PeregrineMod;
+import io.karma.peregrine.api.Peregrine;
 import io.karma.peregrine.api.dispose.Disposable;
 import io.karma.peregrine.api.dispose.DispositionHandler;
 import io.karma.peregrine.api.util.Dispatcher;
@@ -24,6 +25,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.lang.ref.WeakReference;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -36,17 +39,37 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public final class DefaultDispositionHandler implements DispositionHandler {
     private final ConcurrentLinkedQueue<WeakReference<Disposable>> objects = new ConcurrentLinkedQueue<>();
 
+    public static final class SortedCollection<V, C extends Collection<? extends V>> {
+        private final C collection;
+        private final Comparator<? super V> comparator;
+
+        public SortedCollection(C collection, Comparator<? super V> comparator) {
+            this.collection = collection;
+            this.comparator = comparator;
+        }
+    }
+
+    private List<Disposable> getSortedObjects() {
+        // @formatter:off
+        return objects.stream()
+            .map(WeakReference::get)
+            .filter(Objects::nonNull)
+            .sorted(Disposable.PRIORITY_COMPARATOR)
+            .toList();
+        // @formatter:on
+    }
+
     @Override
     public void disposeAll() {
-        for (final var ref : objects) {
-            final var object = ref.get();
-            if (object == null) {
-                continue; // Object was garbage collected, skip
-            }
+        for (final var object : getSortedObjects()) {
             if (object.getDisposeDispatcher() == Dispatcher.BACKGROUND) {
-                PeregrineMod.EXECUTOR_SERVICE.submit(object::dispose);
+                PeregrineMod.EXECUTOR_SERVICE.submit(() -> {
+                    Peregrine.LOGGER.debug("Disposing resource {}", object);
+                    object.dispose();
+                });
                 continue;
             }
+            Peregrine.LOGGER.debug("Disposing resource {}", object);
             object.dispose();
         }
         objects.clear();

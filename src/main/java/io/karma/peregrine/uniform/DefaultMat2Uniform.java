@@ -75,4 +75,17 @@ public final class DefaultMat2Uniform extends AbstractUniform<Matrix2f> implemen
     public Matrix2f get() {
         return value;
     }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if(!(obj instanceof Mat2Uniform other)) {
+            return false;
+        }
+        return value.equals(other.get());
+    }
+
+    @Override
+    public String toString() {
+        return String.format("DefaultMat2Uniform[name=%s,value=%s]", name, value);
+    }
 }

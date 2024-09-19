@@ -137,11 +137,11 @@ public final class DefaultShaderObject extends Program implements ShaderObject {
 
     @Override
     public String toString() {
-        return String.format("DefaultShaderObject[id=%d,location=%s]", id, location);
+        return String.format("DefaultShaderObject[id=%d,type=%s,location=%s]", id, type, location);
     }
 
     @Override
     public int hashCode() {
-        return HashUtils.combine(type.ordinal(), location.hashCode());
+        return HashUtils.combine(location.hashCode(), type.ordinal());
     }
 }

@@ -71,4 +71,17 @@ public final class DefaultVec2Uniform extends AbstractUniform<Vector2f> implemen
     public Vector2f get() {
         return value;
     }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if(!(obj instanceof Vec2Uniform other)) {
+            return false;
+        }
+        return value.equals(other.get());
+    }
+
+    @Override
+    public String toString() {
+        return String.format("DefaultVec2Uniform[name=%s,value=%s]", name, value);
+    }
 }

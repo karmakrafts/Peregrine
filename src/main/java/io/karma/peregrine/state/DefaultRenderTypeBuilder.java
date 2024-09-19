@@ -21,12 +21,12 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat.Mode;
 import io.karma.peregrine.PeregrineMod;
-import io.karma.peregrine.api.state.*;
-import io.karma.peregrine.shader.DefaultShaderProgramBuilder;
 import io.karma.peregrine.api.shader.ShaderProgram;
 import io.karma.peregrine.api.shader.ShaderProgramBuilder;
+import io.karma.peregrine.api.state.*;
 import io.karma.peregrine.api.target.RenderTarget;
 import io.karma.peregrine.api.util.Requires;
+import io.karma.peregrine.shader.DefaultShaderProgramBuilder;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderStateShard.*;
 import net.minecraft.client.renderer.RenderType;
@@ -185,7 +185,7 @@ public final class DefaultRenderTypeBuilder implements RenderTypeBuilder {
     }
 
     @Override
-    public RenderTypeBuilder vertexFormat(final VertexFormat vertexFormat) {
+    public RenderTypeBuilder format(final VertexFormat vertexFormat) {
         this.vertexFormat = vertexFormat;
         return this;
     }
@@ -222,7 +222,7 @@ public final class DefaultRenderTypeBuilder implements RenderTypeBuilder {
 
     @Override
     public RenderTypeBuilder shader(final Consumer<ShaderProgramBuilder> callback) {
-        shader = DefaultShaderProgramBuilder.build(builder -> callback.accept(builder.format(vertexFormat))).asStateShard();
+        shader = DefaultShaderProgramBuilder.build(callback).asStateShard();
         return this;
     }
 

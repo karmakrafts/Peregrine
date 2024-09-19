@@ -72,4 +72,17 @@ public final class DefaultVec3Uniform extends AbstractUniform<Vector3f> implemen
     public Vector3f get() {
         return value;
     }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if(!(obj instanceof Vec3Uniform other)) {
+            return false;
+        }
+        return value.equals(other.get());
+    }
+
+    @Override
+    public String toString() {
+        return String.format("DefaultVec3Uniform[name=%s,value=%s]", name, value);
+    }
 }

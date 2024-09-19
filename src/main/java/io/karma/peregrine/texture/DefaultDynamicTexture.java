@@ -19,6 +19,7 @@ package io.karma.peregrine.texture;
 import io.karma.peregrine.PeregrineMod;
 import io.karma.peregrine.api.state.DSA;
 import io.karma.peregrine.api.texture.*;
+import io.karma.peregrine.api.util.TextureUtils;
 import net.minecraft.server.packs.resources.ResourceProvider;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -30,28 +31,38 @@ import org.lwjgl.opengl.GL11;
  */
 @OnlyIn(Dist.CLIENT)
 public final class DefaultDynamicTexture implements DynamicTexture {
-    private final int id;
-    private TextureFormat format;
+    private int id = -1;
+    private final TextureFormat format;
+    private final TextureFilter minFilter;
+    private final TextureFilter magFilter;
+    private final TextureWrapMode horizontalWrapMode;
+    private final TextureWrapMode verticalWrapMode;
 
-    public DefaultDynamicTexture(final TextureFilter minFilter,
+    public DefaultDynamicTexture(final TextureFormat format,
+                                 final TextureFilter minFilter,
                                  final TextureFilter magFilter,
                                  final TextureWrapMode horizontalWrapMode,
                                  final TextureWrapMode verticalWrapMode) {
-        id = TextureUtils.createTexture(minFilter, magFilter, horizontalWrapMode, verticalWrapMode);
+        this.format = format;
+        this.minFilter = minFilter;
+        this.magFilter = magFilter;
+        this.horizontalWrapMode = horizontalWrapMode;
+        this.verticalWrapMode = verticalWrapMode;
         PeregrineMod.DISPOSE_HANDLER.register(this);
     }
 
     @Override
-    public void resize(final TextureFormat format, final int width, final int height) {
+    public void resize(final int width, final int height) {
+        dispose();
+        id = TextureUtils.createTexture(minFilter, magFilter, horizontalWrapMode, verticalWrapMode);
         DSA.texImage2D(id,
-            0,
             0,
             width,
             height,
             format.getInternalGLType(),
             format.getGLType(),
             format.getGLDataType(),
-            new int[0]);
+            null);
     }
 
     @Override
@@ -66,6 +77,9 @@ public final class DefaultDynamicTexture implements DynamicTexture {
 
     @Override
     public void bind() {
+        if (id == -1) {
+            return;
+        }
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
     }
 
@@ -76,40 +90,67 @@ public final class DefaultDynamicTexture implements DynamicTexture {
 
     @Override
     public int getWidth() {
+        if (id == -1) {
+            return 0;
+        }
         return DSA.getTexParameteri(id, GL11.GL_TEXTURE_WIDTH);
     }
 
     @Override
     public int getHeight() {
+        if (id == -1) {
+            return 0;
+        }
         return DSA.getTexParameteri(id, GL11.GL_TEXTURE_HEIGHT);
     }
 
     @Override
     public TextureFilter getMinFilter() {
+        if (id == -1) {
+            return TextureFilter.NEAREST;
+        }
         return TextureFilter.fromGLType(DSA.getTexParameteri(id, GL11.GL_TEXTURE_MIN_FILTER));
     }
 
     @Override
     public TextureFilter getMagFilter() {
+        if (id == -1) {
+            return TextureFilter.NEAREST;
+        }
         return TextureFilter.fromGLType(DSA.getTexParameteri(id, GL11.GL_TEXTURE_MAG_FILTER));
     }
 
     @Override
     public TextureWrapMode getHorizontalWrapMode() {
+        if (id == -1) {
+            return TextureWrapMode.CLAMP;
+        }
         return TextureWrapMode.fromGLType(DSA.getTexParameteri(id, GL11.GL_TEXTURE_WRAP_S));
     }
 
     @Override
     public TextureWrapMode getVerticalWrapMode() {
+        if (id == -1) {
+            return TextureWrapMode.CLAMP;
+        }
         return TextureWrapMode.fromGLType(DSA.getTexParameteri(id, GL11.GL_TEXTURE_WRAP_T));
     }
 
     @Override
     public void dispose() {
+        if (id == -1) {
+            return;
+        }
         GL11.glDeleteTextures(id);
+        id = -1;
     }
 
     @Override
     public void reload(final ResourceProvider resourceProvider) {
+    }
+
+    @Override
+    public String toString() {
+        return String.format("DefaultDynamicTexture[id=%d,format=%s]", id, format);
     }
 }

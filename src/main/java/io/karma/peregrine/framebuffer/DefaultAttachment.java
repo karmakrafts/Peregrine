@@ -44,8 +44,8 @@ public final class DefaultAttachment implements Attachment {
                              final TextureWrapMode horizontalWrapMode,
                              final TextureWrapMode verticalWrapMode) {
         this.type = type;
-        this.texture = new DefaultDynamicTexture(minFilter, magFilter, horizontalWrapMode, verticalWrapMode);
-        texture.resize(format, width, height);
+        this.texture = new DefaultDynamicTexture(format, minFilter, magFilter, horizontalWrapMode, verticalWrapMode);
+        texture.resize(width, height);
     }
 
     @Override
@@ -61,5 +61,10 @@ public final class DefaultAttachment implements Attachment {
     @Override
     public void dispose() {
         texture.dispose();
+    }
+
+    @Override
+    public String toString() {
+        return String.format("DefaultAttachment[type=%s,texture=%s]", type, texture);
     }
 }

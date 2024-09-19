@@ -84,6 +84,6 @@ public final class DynamicSampler implements Sampler {
 
     @Override
     public String toString() {
-        return String.format("DynamicSampler[textureId=%d]", textureId.getAsInt());
+        return String.format("DynamicSampler[name=%s,textureId=%d]", name, textureId.getAsInt());
     }
 }

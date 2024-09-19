@@ -17,6 +17,7 @@
 package io.karma.peregrine.uniform;
 
 import io.karma.peregrine.api.uniform.Uniform;
+import io.karma.peregrine.api.util.HashUtils;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -46,5 +47,10 @@ public abstract class AbstractUniform<T> implements Uniform<T> {
     @Override
     public boolean requiresUpdate() {
         return requiresUpdate;
+    }
+
+    @Override
+    public int hashCode() {
+        return HashUtils.combine(name.hashCode(), getType().getHash());
     }
 }

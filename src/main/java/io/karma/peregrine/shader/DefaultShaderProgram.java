@@ -184,7 +184,7 @@ public final class DefaultShaderProgram extends ShaderStateShard implements Shad
 
     @Override
     public void reload(final ResourceProvider resourceProvider) {
-        final var cacheDir = FMLLoader.getGamePath().resolve("pda").resolve("shaders");
+        final var cacheDir = FMLLoader.getGamePath().resolve(Peregrine.MODID).resolve("shaders");
         if (!Files.exists(cacheDir)) {
             try {
                 Files.createDirectories(cacheDir);
@@ -391,17 +391,17 @@ public final class DefaultShaderProgram extends ShaderStateShard implements Shad
 
     @Override
     public @NotNull String toString() {
-        return String.format("DefaultShaderProgram[id=%d,objects=%s]", id, objects);
+        return String.format("DefaultShaderProgram[id=%d,format=%s,objects=%s]", id, vertexFormat, objects);
     }
 
     @Override
     public int hashCode() {
-        return HashUtils.combine(vertexFormat.hashCode(),
+        return HashUtils.combineMany(vertexFormat.hashCode(),
             objects.hashCode(),
             uniformCache.hashCode(),
             HashUtils.hash(uniformBuffers),
             samplerIds.hashCode(),
-            HashUtils.hashValuesAsStrings(constants),
-            HashUtils.hashValuesAsStrings(defines));
+            HashUtils.hash(constants),
+            HashUtils.hash(defines));
     }
 }

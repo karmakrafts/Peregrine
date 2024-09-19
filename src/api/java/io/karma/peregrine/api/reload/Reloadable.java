@@ -44,13 +44,13 @@ public interface Reloadable {
      * A default comparator function which compares
      * the prepare priorities of the two given reloadable objects.
      */
-    Comparator<Reloadable> PREP_COMPARATOR = Comparator.comparingInt(Reloadable::getPreparePriority);
+    Comparator<? super Reloadable> PREP_COMPARATOR = Comparator.comparingInt(Reloadable::getPreparePriority);
 
     /**
      * A default comparator function which compares
      * the reload priorities of the two given reloadable objects.
      */
-    Comparator<Reloadable> COMPARATOR = (a, b) -> Integer.compare(b.getReloadPriority(), a.getReloadPriority());
+    Comparator<? super Reloadable> COMPARATOR = (a, b) -> Integer.compare(b.getReloadPriority(), a.getReloadPriority());
 
     /**
      * Determines whether this object will be reloaded on the

@@ -77,7 +77,15 @@ public final class DefaultLongUniform extends AbstractUniform<Long> implements L
     }
 
     @Override
-    public int hashCode() {
-        return HashUtils.combine(name.hashCode(), getType().getHash());
+    public boolean equals(final Object obj) {
+        if(!(obj instanceof LongUniform other)) {
+            return false;
+        }
+        return value == other.get();
+    }
+
+    @Override
+    public String toString() {
+        return String.format("DefaultLongUniform[name=%s,value=%d]", name, value);
     }
 }

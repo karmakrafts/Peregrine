@@ -30,6 +30,7 @@ import io.karma.peregrine.api.shader.*;
 import io.karma.peregrine.api.state.BlendModeFactory;
 import io.karma.peregrine.api.state.RenderTypeBuilder;
 import io.karma.peregrine.api.state.RenderTypeFactory;
+import io.karma.peregrine.api.target.RenderTarget;
 import io.karma.peregrine.api.target.RenderTargetFactories;
 import io.karma.peregrine.api.texture.Texture;
 import io.karma.peregrine.api.texture.TextureFactories;
@@ -60,6 +61,8 @@ import org.lwjgl.opengl.GLCapabilities;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
@@ -133,7 +136,6 @@ public final class Peregrine {
     private static boolean isIrisInstalled;
 
     private static boolean isDevelopmentEnvironment;
-    private static IForgeRegistry<FontFamily> fontFamilyRegistry;
     private static FontFamilyFactory fontFamilyFactory;
 
     // @formatter:off
@@ -149,7 +151,7 @@ public final class Peregrine {
      * @return a new deferred register associated with the given mod ID.
      */
     public static DeferredRegister<FontFamily> createFontFamilyRegister(final String modId) {
-        return DeferredRegister.create(fontFamilyRegistry, modId);
+        return DeferredRegister.create(Objects.requireNonNull(getRegistry(FONT_FAMILY_REGISTRY_NAME)), modId);
     }
 
     /**
@@ -201,16 +203,11 @@ public final class Peregrine {
         supportsDirectStateAccess = queryExtension("GL_ARB_direct_state_access");
     }
 
-    private static void queryRegistries() {
-        LOGGER.info("Querying registries");
-        fontFamilyRegistry = getRegistry(FONT_FAMILY_REGISTRY_NAME);
-    }
-
     @Internal
     public static void init(final ExecutorService executorService,
-                     final ReloadHandler reloadHandler,
-                     final DispositionHandler dispositionHandler,
-                     final DI di) {
+                            final ReloadHandler reloadHandler,
+                            final DispositionHandler dispositionHandler,
+                            final DI di) {
         Requires.that(isInitialized.compareAndSet(false, true), "Peregrine is already initialized");
 
         LOGGER.info("Initializing Peregrine");
@@ -247,7 +244,6 @@ public final class Peregrine {
             isIrisInstalled = (Boolean) environment.get("is_iris_installed");
         });
 
-        queryRegistries();
         fontFamilyFactory = di.getSafe(FontFamilyFactory.class);
     }
 
@@ -448,7 +444,15 @@ public final class Peregrine {
         return framebufferFactory;
     }
 
-    // TODO: document this
+    /**
+     * Retrieves the render target factories.
+     * <p>
+     * You usually don't want to call this directly, instead use
+     * {@link RenderTarget#get(int)} or
+     * one of the getters provided by this interface like {@link RenderTargetFactories#getMainTarget()}.
+     *
+     * @return the render target factories.
+     */
     @OnlyIn(Dist.CLIENT)
     public static RenderTargetFactories getRenderTargetFactories() {
         ensureInitialized();

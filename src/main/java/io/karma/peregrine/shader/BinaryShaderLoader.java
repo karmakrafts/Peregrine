@@ -39,7 +39,8 @@ import java.nio.file.Path;
  * @since 31/08/2024
  */
 @OnlyIn(Dist.CLIENT)
-public final class BinaryShaderLoader extends AbstractShaderLoader {
+public final class
+BinaryShaderLoader extends AbstractShaderLoader {
     private static int getProgramSourceHash(final ResourceProvider resourceProvider, final ShaderProgram program) {
         var hash = 0;
         for (final var object : program.getObjects()) {

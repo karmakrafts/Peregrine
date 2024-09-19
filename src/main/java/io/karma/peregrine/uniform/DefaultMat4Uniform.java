@@ -75,4 +75,17 @@ public final class DefaultMat4Uniform extends AbstractUniform<Matrix4f> implemen
     public Matrix4f get() {
         return value;
     }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if(!(obj instanceof Mat4Uniform other)) {
+            return false;
+        }
+        return value.equals(other.get());
+    }
+
+    @Override
+    public String toString() {
+        return String.format("DefaultMat4Uniform[name=%s,value=%s]", name, value);
+    }
 }

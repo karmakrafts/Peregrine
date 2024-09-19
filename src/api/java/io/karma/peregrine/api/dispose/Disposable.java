@@ -41,7 +41,7 @@ public interface Disposable {
      * A default comparator function which compares
      * the priorities of the two given disposable objects.
      */
-    Comparator<? extends Disposable> PRIORITY_COMPARATOR = (a, b) -> Integer.compare(b.getDisposePriority(),
+    Comparator<? super Disposable> PRIORITY_COMPARATOR = (a, b) -> Integer.compare(b.getDisposePriority(),
         a.getDisposePriority());
 
     /**

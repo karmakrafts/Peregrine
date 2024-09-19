@@ -14,10 +14,12 @@
  *  limitations under the License.
  */
 
-package io.karma.peregrine.api.texture;
+package io.karma.peregrine.api.util;
 
 import io.karma.peregrine.api.Peregrine;
 import io.karma.peregrine.api.state.DSA;
+import io.karma.peregrine.api.texture.TextureFilter;
+import io.karma.peregrine.api.texture.TextureWrapMode;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -102,7 +104,6 @@ public final class TextureUtils {
         final var bufferedImage = buffer(image);
         setUnpackAlignment(1);
         DSA.texImage2D(texture,
-            0,
             0,
             bufferedImage.getWidth(),
             bufferedImage.getHeight(),

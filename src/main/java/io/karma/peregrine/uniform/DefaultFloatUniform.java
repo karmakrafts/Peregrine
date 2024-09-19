@@ -79,7 +79,15 @@ public final class DefaultFloatUniform extends AbstractUniform<Float> implements
     }
 
     @Override
-    public int hashCode() {
-        return HashUtils.combine(name.hashCode(), getType().getHash());
+    public boolean equals(final Object obj) {
+        if(!(obj instanceof FloatUniform other)) {
+            return false;
+        }
+        return value == other.get();
+    }
+
+    @Override
+    public String toString() {
+        return String.format("DefaultFloatUniform[name=%s,value=%f]", name, value);
     }
 }

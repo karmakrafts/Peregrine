@@ -17,6 +17,8 @@
 package io.karma.peregrine.uniform;
 
 import io.karma.peregrine.api.shader.ShaderProgram;
+import io.karma.peregrine.api.uniform.MatrixUniform;
+import io.karma.peregrine.api.uniform.MatrixUniform.DMat3Uniform;
 import io.karma.peregrine.api.uniform.ScalarType;
 import io.karma.peregrine.api.uniform.ScalarUniform.DoubleUniform;
 import io.karma.peregrine.api.uniform.UniformType;
@@ -77,7 +79,15 @@ public final class DefaultDoubleUniform extends AbstractUniform<Double> implemen
     }
 
     @Override
-    public int hashCode() {
-        return HashUtils.combine(name.hashCode(), getType().getHash());
+    public boolean equals(final Object obj) {
+        if(!(obj instanceof DoubleUniform other)) {
+            return false;
+        }
+        return value == other.get();
+    }
+
+    @Override
+    public String toString() {
+        return String.format("DefaultDoubleUniform[name=%s,value=%f]", name, value);
     }
 }

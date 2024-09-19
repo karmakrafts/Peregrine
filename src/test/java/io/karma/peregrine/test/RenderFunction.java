@@ -14,16 +14,15 @@
  *  limitations under the License.
  */
 
-package io.karma.peregrine.api.texture;
+package io.karma.peregrine.test;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import java.util.function.Consumer;
 
 /**
  * @author Alexander Hinze
- * @since 31/08/2024
+ * @since 16/09/2024
  */
-@OnlyIn(Dist.CLIENT)
-public interface DynamicTexture extends Texture {
-    void resize(final int width, final int height);
+@FunctionalInterface
+public interface RenderFunction {
+    boolean render(final int frameIndex, final Consumer<Runnable> queCallback);
 }

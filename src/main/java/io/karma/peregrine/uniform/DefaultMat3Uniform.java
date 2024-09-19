@@ -75,4 +75,17 @@ public final class DefaultMat3Uniform extends AbstractUniform<Matrix3f> implemen
     public Matrix3f get() {
         return value;
     }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if(!(obj instanceof Mat3Uniform other)) {
+            return false;
+        }
+        return value.equals(other.get());
+    }
+
+    @Override
+    public String toString() {
+        return String.format("DefaultMat3Uniform[name=%s,value=%s]", name, value);
+    }
 }

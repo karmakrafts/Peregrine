@@ -61,7 +61,7 @@ public enum MatrixType implements UniformType {
 
     @Override
     public int getHash() {
-        return HashUtils.combine(type.hashCode(), getComponentCount());
+        return HashUtils.combine(type.getHash(), HashUtils.combine(getComponentCount(), defaultValue.hashCode()));
     }
 
     @Override

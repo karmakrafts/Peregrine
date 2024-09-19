@@ -49,7 +49,7 @@ public final class VertexFormatElementMixin {
     // Make the hashCode of VFEs reproducible, so we can use it for FS caching
     @Inject(method = "hashCode", at = @At("HEAD"), cancellable = true)
     private void onHashCode(final CallbackInfoReturnable<Integer> cir) {
-        cir.setReturnValue(HashUtils.combine(type.ordinal(), usage.ordinal(), index, count));
+        cir.setReturnValue(HashUtils.combineMany(type.ordinal(), usage.ordinal(), index, count));
         cir.cancel();
     }
 }

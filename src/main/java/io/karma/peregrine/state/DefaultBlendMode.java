@@ -19,6 +19,7 @@ package io.karma.peregrine.state;
 import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
 import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
 import io.karma.peregrine.api.state.BlendMode;
+import io.karma.peregrine.api.util.HashUtils;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -61,5 +62,31 @@ public final class DefaultBlendMode implements BlendMode {
     @Override
     public DestFactor getColorDestFactor() {
         return colorDestFactor;
+    }
+
+    @Override
+    public int hashCode() {
+        return HashUtils.combineMany(colorSourceFactor.ordinal(),
+            alphaSourceFactor.ordinal(),
+            colorDestFactor.ordinal(),
+            alphaDestFactor.ordinal());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof BlendMode other)) {
+            return false;
+        }
+        return colorSourceFactor == other.getSourceFactor() && alphaSourceFactor == other.getSourceFactor() && colorDestFactor == other.getDestFactor() && alphaDestFactor == other.getDestFactor();
+    }
+
+    @Override
+    public String toString() {
+        return String.format(
+            "DefaultBlendMode[colorSourceFactor=%s,alphaSourceFactor=%s,colorDestFactor=%s,alphaDestFactor=%s]",
+            colorSourceFactor,
+            alphaSourceFactor,
+            colorDestFactor,
+            alphaDestFactor);
     }
 }

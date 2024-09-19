@@ -73,4 +73,17 @@ public final class DefaultVec4Uniform extends AbstractUniform<Vector4f> implemen
     public Vector4f get() {
         return value;
     }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if(!(obj instanceof Vec4Uniform other)) {
+            return false;
+        }
+        return value.equals(other.get());
+    }
+
+    @Override
+    public String toString() {
+        return String.format("DefaultVec4Uniform[name=%s,value=%s]", name, value);
+    }
 }

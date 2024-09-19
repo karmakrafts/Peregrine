@@ -33,6 +33,7 @@ public interface TextureFactories {
     /**
      * Creates a new empty texture object with the given properties.
      *
+     * @param format             the format of the newly created texture. See {@link DefaultTextureFormat}.
      * @param minFilter          the minifying texture filter applied to the texture.
      * @param magFilter          the magnifying texture filter applied to the texture.
      * @param horizontalWrapMode the type of wrapping applied to the texture
@@ -41,7 +42,8 @@ public interface TextureFactories {
      *                           vertically when it is sampled beyond its bounds.
      * @return a new empty texture object with the given properties.
      */
-    DynamicTexture create(final TextureFilter minFilter,
+    DynamicTexture create(final TextureFormat format,
+                          final TextureFilter minFilter,
                           final TextureFilter magFilter,
                           final TextureWrapMode horizontalWrapMode,
                           final TextureWrapMode verticalWrapMode);

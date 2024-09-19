@@ -78,4 +78,16 @@ public final class DefaultDMat4Uniform extends AbstractUniform<Matrix4d> impleme
         return value;
     }
 
+    @Override
+    public boolean equals(final Object obj) {
+        if(!(obj instanceof DMat4Uniform other)) {
+            return false;
+        }
+        return value.equals(other.get());
+    }
+
+    @Override
+    public String toString() {
+        return String.format("DefaultDMat4Uniform[name=%s,value=%s]", name, value);
+    }
 }
